@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Проверка записи файлов</title>
+<style>
+  body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #212529; background: #f8f9fa; max-width: 760px; margin: 32px auto; padding: 0 16px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  p { margin: 8px 0; color: #495057; }
+  .steps { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  button { font: inherit; padding: 8px 16px; border-radius: 8px; border: 1px solid #dee2e6; background: #fff; cursor: pointer; }
+  button.p { background: #228be6; border-color: #228be6; color: #fff; font-weight: 600; }
+  button:disabled { background: #f1f3f5; color: #adb5bd; cursor: not-allowed; }
+  #env, #log { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 12px 16px; margin: 12px 0; }
+  #log div { padding: 2px 0; }
+  .ok { color: #2b8a3e; } .bad { color: #e03131; font-weight: 600; } .info { color: #495057; }
+  #verdict { margin: 16px 0; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; display: none; }
+  #verdict.ok { display: block; background: #ebfbee; } #verdict.bad { display: block; background: #fff5f5; }
+  code { background: #f1f3f5; padding: 0 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<h1>Проверка: может ли страница записывать файлы</h1>
+<p>Открой этот файл двойным кликом в <b>Chrome или Edge</b> (адрес должен начинаться с <code>file://</code>), на том компьютере, где будет работать приложение. Нажимай кнопки по порядку.</p>
+<p>Выбирай <b>саму папку проекта</b> (например, <code>mk-blocks</code>), а не «Рабочий стол», «Документы» или «Загрузки»: браузер их не разрешает. Тест создаёт только временные файлы <code>_fs-test*</code> и сам их удаляет.</p>
+
+<div id="env"></div>
+
+<div class="steps">
+  <button id="pick" class="p">1. Выбрать папку проекта</button>
+  <button id="run" disabled>2. Проверить запись</button>
+  <button id="remember" disabled>3. Запомнить папку</button>
+  <button id="again" disabled>4. Проверить запомненную папку (после перезагрузки страницы)</button>
+  <button id="dl">5. Проверить скачивание файла</button>
+</div>
+
+<div id="verdict"></div>
+<div id="log"></div>
+
+<script>
+/* Ничего не подключено извне. Работает по file://. */
+var logEl = document.getElementById('log'), verdict = document.getElementById('verdict');
+var btn = { pick: pick, run: run, remember: remember, again: again, dl: dl };
+Object.keys(btn).forEach(function (k) { document.getElementById(k).addEventListener('click', btn[k]); });
+var $ = function (id) { return document.getElementById(id); };
+var dir = null, failed = 0;
+
+function say(ok, msg) {
+  var d = document.createElement('div');
+  d.className = ok === true ? 'ok' : ok === false ? 'bad' : 'info';
+  d.textContent = (ok === true ? '✓ ' : ok === false ? '✗ ' : '· ') + msg;
+  logEl.appendChild(d);
+  if (ok === false) failed++;
+  return ok;
+}
+function err(e) { return e && e.name ? e.name + ': ' + e.message : String(e); }
+
+/* ── окружение ── */
+(function env() {
+  var has = typeof window.showDirectoryPicker === 'function';
+  $('env').innerHTML =
+    '<div>Адрес: <b>' + location.protocol + '//</b> ' + (location.protocol === 'file:' ? '<span class="ok">✓ файл открыт по file://</span>' : '<span class="bad">✗ открой файл двойным кликом, а не через сервер</span>') + '</div>' +
+    '<div>Безопасный контекст: <b>' + window.isSecureContext + '</b></div>' +
+    '<div>Доступен showDirectoryPicker: <b>' + (has ? '<span class="ok">да</span>' : '<span class="bad">нет — нужен Chrome или Edge</span>') + '</div>';
+  if (!has) { $('pick').disabled = true; }
+  loadRemembered();
+})();
+
+/* ── 1. выбор папки ── */
+async function pick() {
+  try {
+    dir = await window.showDirectoryPicker({ mode: 'readwrite' });
+    say(true, 'Папка выбрана: «' + dir.name + '»');
+    $('run').disabled = false; $('remember').disabled = false;
+  } catch (e) { say(false, 'Выбор папки не удался — ' + err(e)); }
+}
+
+/* ── 2. запись ── */
+async function writeFile(d, name, text) {
+  var fh = await d.getFileHandle(name, { create: true });
+  var w = await fh.createWritable(); await w.write(text); await w.close();
+  return (await (await d.getFileHandle(name)).getFile()).text();
+}
+async function run() {
+  failed = 0; verdict.className = ''; verdict.style.display = '';
+  if (!dir) return say(false, 'Сначала выбери папку');
+  var created = [];
+  try {
+    var p = await dir.queryPermission({ mode: 'readwrite' });
+    if (p !== 'granted') p = await dir.requestPermission({ mode: 'readwrite' });
+    say(p === 'granted', 'Разрешение на запись: ' + p);
+
+    var names = []; for await (var n of dir.keys()) names.push(n);
+    say(null, 'В папке ' + names.length + ' элементов' + (names.indexOf('workshops') >= 0 ? ', есть workshops/' : ', папки workshops/ нет') + (names.indexOf('index.html') >= 0 ? ', есть index.html' : ', index.html нет'));
+
+    var a = 'проверка записи\nвторая строка: <script src="workshops/mk3.js"><\/script>\n';
+    var back = await writeFile(dir, '_fs-test.txt', a); created.push([dir, '_fs-test.txt']);
+    say(back === a, 'Запись нового файла и чтение обратно (кириллица, спецсимволы)');
+
+    var b = 'перезаписано ' + Date.now();
+    back = await writeFile(dir, '_fs-test.txt', b);
+    say(back === b, 'Перезапись существующего файла без новых вопросов браузера');
+
+    var sub = null, subName = 'workshops';
+    try { sub = await dir.getDirectoryHandle('workshops'); }
+    catch (e) { sub = await dir.getDirectoryHandle('_fs-test-dir', { create: true }); subName = '_fs-test-dir'; created.push([dir, '_fs-test-dir']); }
+    var c = 'window.MKB = window.MKB || {};\n';
+    back = await writeFile(sub, '_fs-test.js', c); created.push([sub, '_fs-test.js']);
+    say(back === c, 'Запись в подпапку «' + subName + '/»');
+  } catch (e) { say(false, 'Ошибка при записи — ' + err(e)); }
+
+  for (var i = created.length - 1; i >= 0; i--) {
+    try { await created[i][0].removeEntry(created[i][1]); } catch (e) { say(false, 'Не удалось удалить тестовый файл «' + created[i][1] + '» — ' + err(e) + '. Удали его вручную.'); }
+  }
+  say(null, 'Тестовые файлы удалены');
+  verdict.className = failed ? 'bad' : 'ok';
+  verdict.textContent = failed
+    ? 'Запись не работает так, как нужно. Кнопку «Сохранить» придётся делать через скачивание файла. Пришли текст ниже.'
+    : 'Запись работает. «Сохранить» в админке можно строить на выборе папки.';
+}
+
+/* ── 3–4. запомнить папку между запусками ── */
+function idb() {
+  return new Promise(function (res, rej) {
+    var r = indexedDB.open('fs-check', 1);
+    r.onupgradeneeded = function () { r.result.createObjectStore('h'); };
+    r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); };
+  });
+}
+async function remember() {
+  try {
+    var db = await idb();
+    await new Promise(function (res, rej) { var t = db.transaction('h', 'readwrite'); t.objectStore('h').put(dir, 'dir'); t.oncomplete = res; t.onerror = function () { rej(t.error); }; });
+    say(true, 'Папка запомнена. Обнови страницу (F5) и нажми кнопку 4: увидим, спросит ли браузер разрешение заново.');
+  } catch (e) { say(false, 'Запомнить папку не удалось — ' + err(e)); }
+}
+async function loadRemembered() {
+  try {
+    var db = await idb();
+    var h = await new Promise(function (res, rej) { var q = db.transaction('h').objectStore('h').get('dir'); q.onsuccess = function () { res(q.result); }; q.onerror = function () { rej(q.error); }; });
+    if (h) { dir = h; $('again').disabled = false; say(null, 'Найдена запомненная папка «' + h.name + '»'); }
+  } catch (e) { say(null, 'Хранилище IndexedDB недоступно — ' + err(e)); }
+}
+async function again() {
+  try {
+    var p = await dir.queryPermission({ mode: 'readwrite' });
+    say(null, 'Разрешение до клика: ' + p + (p === 'granted' ? ' (браузер помнит доступ, повторный выбор папки не нужен)' : ' (нужно подтвердить доступ заново)'));
+    if (p !== 'granted') { p = await dir.requestPermission({ mode: 'readwrite' }); say(p === 'granted', 'После подтверждения: ' + p); }
+    if (p === 'granted') { $('run').disabled = false; say(true, 'Теперь можно нажать «2. Проверить запись» для запомненной папки'); }
+  } catch (e) { say(false, 'Не вышло — ' + err(e)); }
+}
+
+/* ── 5. запасной путь: скачивание ── */
+function dl() {
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['проверка скачивания\n'], { type: 'text/plain' }));
+  a.download = '_fs-test-download.txt'; document.body.appendChild(a); a.click(); a.remove();
+  say(null, 'Запрошено скачивание «_fs-test-download.txt». Если файл появился в загрузках — запасной путь работает. Удали его вручную.');
+}
+</script>
+</body>
+</html>

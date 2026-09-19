@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Макет 2 — Экран администратора</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="admin.css?v=3">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6"/></symbol>
+  <symbol id="i-align" viewBox="0 0 24 24"><path d="M4 6h16M9 12h11M13 18h7M4 10l3 2-3 2"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-arrow-r" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-l" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+</svg>
+
+<div class="cap"><b>2. Экран администратора</b><span>1280 × 720 · режим «Фрагменты» · три этапа, выбран первый · правки не сохранены · фрагмент 4 развёрнут</span></div>
+
+<!-- ЭКРАН (источник; остальные артборды — его копии в другом состоянии) -->
+<div class="frame adm mode-frags" id="f1">
+  <header class="head">
+    <div class="hl">
+      <img class="logo" src="logo.svg" alt="Шаг в будущее">
+      <span class="sep"></span>
+      <div><div class="crumbs">Администрирование</div><h1>МК-3: Адресная лента WS2812</h1></div>
+    </div>
+    <div class="hr">
+      <span class="badge b-warn"><svg class="ic" style="margin-right:6px"><use href="#i-warn"/></svg>Есть несохранённые изменения</span>
+      <button class="btn" disabled title="Сначала сохраните изменения"><svg class="ic"><use href="#i-eye"/></svg>Посмотреть как ученик</button>
+      <button class="btn btn-p"><svg class="ic"><use href="#i-save"/></svg>Сохранить</button>
+      <button class="btn">Выйти</button>
+    </div>
+  </header>
+
+  <div class="body">
+    <div class="main"><div class="col">
+
+      <section class="panel">
+        <div class="panel-b" style="padding-top:var(--sp-20)">
+          <div class="row2">
+            <div class="fld"><label>Название мастер-класса</label><div class="in"><input type="text" value="МК-3: Адресная лента WS2812"></div></div>
+            <div class="fld"><label>Язык</label><select><option>Arduino</option><option>Python</option></select></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel sec-stages"><div class="panel-h"><div><h2>Этапы</h2><p>Каждый этап — отдельный код. Ученик выбирает этап в списке в шапке.</p></div><span class="cnt">3 этапа</span></div><div class="panel-b"><div class="stabs"><button class="stab on"><span class="sq2">1</span>Лента белым цветом</button><button class="stab"><span class="sq2">2</span>Бегущий огонёк</button><button class="stab"><span class="sq2">3</span>Плавная радуга</button><button class="stab plus"><svg class="ic"><use href="#i-plus"/></svg>Этап</button></div><div class="stage-edit"><div class="fld"><label>Название этапа</label><div class="in"><input type="text" value="Лента белым цветом"></div></div><button class="btn btn-dl"><svg class="ic"><use href="#i-trash"/></svg>Удалить этап</button></div></div></section>
+
+      <section class="panel sec-frags">
+        <div class="panel-h"><div><h2>Фрагменты</h2><p>Вставьте код кусками. Порядок фрагментов между собой неизменен.</p></div><span class="cnt">4 фрагмента</span></div>
+        <div class="panel-b">
+
+          <div class="frag"><div class="frag-h">
+            <span class="frag-n">1</span><span class="frag-prev">#define LED_PIN 5</span>
+            <span class="badge b-info">строки меняются</span><span class="cnt">4 строки</span>
+            <button class="ib" disabled aria-label="Выше"><svg class="ic"><use href="#i-up"/></svg></button>
+            <button class="ib" aria-label="Ниже"><svg class="ic"><use href="#i-down"/></svg></button>
+            <button class="ib del" aria-label="Удалить фрагмент"><svg class="ic"><use href="#i-trash"/></svg></button>
+            <button class="ib" aria-label="Развернуть"><svg class="ic"><use href="#i-down"/></svg></button>
+          </div></div>
+
+          <div class="frag"><div class="frag-h">
+            <span class="frag-n">2</span><span class="frag-prev">CRGB leds[NUM_LEDS];</span><span class="cnt">1 строка</span>
+            <button class="ib" aria-label="Выше"><svg class="ic"><use href="#i-up"/></svg></button>
+            <button class="ib" aria-label="Ниже"><svg class="ic"><use href="#i-down"/></svg></button>
+            <button class="ib del" aria-label="Удалить фрагмент"><svg class="ic"><use href="#i-trash"/></svg></button>
+            <button class="ib" aria-label="Развернуть"><svg class="ic"><use href="#i-down"/></svg></button>
+          </div></div>
+
+          <div class="frag"><div class="frag-h">
+            <span class="frag-n">3</span><span class="frag-prev">void setup() {</span><span class="cnt">4 строки</span>
+            <button class="ib" aria-label="Выше"><svg class="ic"><use href="#i-up"/></svg></button>
+            <button class="ib" aria-label="Ниже"><svg class="ic"><use href="#i-down"/></svg></button>
+            <button class="ib del" aria-label="Удалить фрагмент"><svg class="ic"><use href="#i-trash"/></svg></button>
+            <button class="ib" aria-label="Развернуть"><svg class="ic"><use href="#i-down"/></svg></button>
+          </div></div>
+
+          <div class="frag open">
+            <div class="frag-h">
+              <span class="frag-n">4</span><span class="ttl">Фрагмент 4</span><span class="cnt">4 строки</span>
+              <button class="ib" aria-label="Выше"><svg class="ic"><use href="#i-up"/></svg></button>
+              <button class="ib" disabled aria-label="Ниже"><svg class="ic"><use href="#i-down"/></svg></button>
+              <button class="ib del" aria-label="Удалить фрагмент"><svg class="ic"><use href="#i-trash"/></svg></button>
+              <button class="ib" aria-label="Свернуть"><svg class="ic"><use href="#i-up"/></svg></button>
+            </div>
+            <div class="frag-b">
+              <textarea class="code" spellcheck="false">void loop() {
+  fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue}});
+  FastLED.show();
+}</textarea>
+              <div class="tools">
+                <span class="switch"><span class="track"></span><b>Выключено</b><span>Строки можно менять местами</span></span>
+                <button class="btn btn-s"><svg class="ic"><use href="#i-align"/></svg>Выровнять отступы</button>
+              </div>
+              <p class="meta">Блоков: 3 · хвост: 1 · шаг отступа: 2 · полей ввода: 1 (список из 3 значений)</p>
+            </div>
+          </div>
+
+          <button class="add"><svg class="ic"><use href="#i-plus"/></svg>Фрагмент</button>
+        </div>
+        <div class="parse-row">
+          <span>Когда фрагменты вставлены, разберите код на шаги. К фрагментам можно вернуться.</span>
+          <button class="btn btn-p">Разобрать на шаги<svg class="ic"><use href="#i-arrow-r"/></svg></button>
+        </div>
+      </section>
+
+      <section class="panel sec-steps" id="steps">
+        <div class="panel-h"><div><h2>Шаги</h2><p>Код разобран на 11 строк-блоков. Каждая строка — один шаг; описание увидит ученик, когда дойдёт до неё.</p></div>
+          <div style="display:flex;align-items:center;gap:var(--sp-12)"><span class="badge b-warn">1 шаг без описания</span><button class="btn btn-s"><svg class="ic"><use href="#i-arrow-l"/></svg>К фрагментам</button></div></div>
+        <div class="steps">
+          <div class="step" style="--d:0"><div class="sn">Шаг 1</div><div class="sb"><div class="code"><span>#define LED_PIN 5</span><span class="ft">фрагмент 1</span></div><input type="text" value="Задайте пин, к которому подключена лента."></div></div>
+          <div class="step" style="--d:0"><div class="sn">Шаг 2</div><div class="sb"><div class="code"><span>#define NUM_LEDS 30</span><span class="ft">фрагмент 1</span></div><input type="text" value="Укажите, сколько светодиодов на ленте."></div></div>
+          <div class="step" style="--d:0"><div class="sn">Шаг 3</div><div class="sb"><div class="code"><span>#define POT A0</span><span class="ft">фрагмент 1</span></div><input type="text" value="Задайте пин потенциометра."></div></div>
+          <div class="step" style="--d:0"><div class="sn">Шаг 4</div><div class="sb"><div class="code"><span>#include &lt;FastLED.h&gt;</span><span class="ft">фрагмент 1</span></div><input type="text" value="Подключите библиотеку FastLED."></div></div>
+          <div class="step" style="--d:0"><div class="sn">Шаг 5</div><div class="sb"><div class="code"><span>CRGB leds[NUM_LEDS];</span><span class="ft">фрагмент 2</span></div><input type="text" value="Создайте массив цветов — по одному на каждый светодиод."></div></div>
+          <div class="step" style="--d:0"><div class="sn">Шаг 6</div><div class="sb"><div class="code"><span>void setup() {</span><span class="ft">фрагмент 3</span></div><input type="text" value="Начните функцию setup — она выполняется один раз при запуске."></div></div>
+          <div class="step" style="--d:1"><div class="sn">Шаг 7</div><div class="sb"><div class="code"><span>FastLED.addLeds&lt;WS2812, LED_PIN, GRB&gt;(leds, NUM_LEDS);</span><span class="ft">фрагмент 3</span></div><input type="text" value="Сообщите библиотеке тип ленты, пин и массив цветов."></div></div>
+          <div class="step" style="--d:1"><div class="sn">Шаг 8</div><div class="sb"><div class="code"><span>FastLED.setBrightness(200);</span><span class="ft">фрагмент 3</span></div><input class="miss" type="text" value="" placeholder="Что должен сделать ученик на этом шаге?"><span class="miss-t"><svg class="ic"><use href="#i-warn"/></svg>Нет описания — ученик увидит пустой шаг</span></div></div>
+          <div class="step" style="--d:0"><div class="sn">Шаг 9</div><div class="sb"><div class="code"><span>void loop() {</span><span class="ft">фрагмент 4</span></div><input type="text" value="Начните функцию loop — она повторяется бесконечно."></div></div>
+          <div class="step" style="--d:1"><div class="sn">Шаг 10</div><div class="sb"><div class="code"><span>fill_solid(leds, NUM_LEDS, CRGB::<span class="chip-f">White | Red | Blue</span>);</span><span class="ft">фрагмент 4</span></div><input type="text" value="Залейте всю ленту одним цветом."></div></div>
+          <div class="step" style="--d:1"><div class="sn">Шаг 11</div><div class="sb"><div class="code"><span>FastLED.show();</span><span class="ft">фрагмент 4</span></div><input type="text" value="Отправьте цвета на ленту."></div></div>
+        </div>
+        <div class="steps-foot">Закрывающие строки («}») появляются сами и шагов не имеют.</div>
+      </section>
+
+    </div></div>
+
+    <!-- сайдбар справа -->
+    <aside class="tree">
+      <div class="tree-h"><b>Мастер-классы</b><button class="collapse-btn" aria-label="Свернуть список"><svg class="ic"><use href="#i-chev-r"/></svg></button></div>
+      <div class="tree-l">
+        <div class="mk on"><span class="sq">МК3</span><span class="t">МК-3: Адресная лента WS2812</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+        <div class="mk"><span class="sq">МК1</span><span class="t">МК-1: Светодиод и кнопка</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+        <div class="mk"><span class="sq">МК2</span><span class="t">МК-2: Датчик расстояния</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+        <div class="mk"><span class="sq">МК4</span><span class="t">МК-4: Сервопривод</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+        <div class="mk"><span class="sq">МК5</span><span class="t">МК-5: Светофор</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+        <div class="mk"><span class="sq">МК6</span><span class="t">МК-6: Зуммер и мелодии</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+        <div class="mk"><span class="sq">Py1</span><span class="t">Py-1: Первая программа</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+        <div class="mk"><span class="sq">Py2</span><span class="t">Py-2: Циклы и условия</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+        <div class="mk"><span class="sq">Py3</span><span class="t">Py-3: Списки</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+      </div>
+      <div class="tree-f"><button class="btn"><svg class="ic"><use href="#i-plus"/></svg><span class="lbl">Мастер-класс</span></button></div>
+    </aside>
+  </div>
+</div>
+
+<div class="cap"><b>2б. Режим «Шаги»</b><span>после «Разобрать на шаги» фрагменты заменяются шагами · «К фрагментам» возвращает назад</span></div>
+<div class="frame adm" data-from="f1" data-mode="steps"></div>
+
+<div class="cap"><b>2в. Режим «Шаги», прокрутка вниз</b><span>у строки без описания — предупреждение</span></div>
+<div class="frame adm" data-from="f1" data-mode="steps" data-scroll="5000"></div>
+
+<div class="cap"><b>2г. Новый пустой мастер-класс</b><span>после «+ Мастер-класс»: пустые название и язык, один пустой фрагмент; разобрать на шаги пока нельзя</span></div>
+<div class="frame adm" data-from="f1" data-col="t-empty" data-title="Новый мастер-класс"></div>
+
+<div class="cap"><b>2д. Новый этап</b><span>после «+ Этап»: этап добавлен в конец и выбран, название и фрагмент пустые</span></div>
+<div class="frame adm" data-from="f1" data-col="t-newstage"></div>
+
+<div class="cap"><b>2е. Удаление этапа</b><span>модалка, открывается кнопкой «Удалить этап»; у единственного этапа кнопка неактивна</span></div>
+<div class="frame adm dim" data-from="f1" data-modal="m-stage"></div>
+
+<div class="cap"><b>2ж. Повторное разбиение</b><span>модалка, если описания уже есть, а код фрагментов изменился</span></div>
+<div class="frame adm dim" data-from="f1" data-modal="m-reparse"></div>
+
+<div class="cap"><b>2з. Сайдбар свёрнут</b><span>квадратики с кодом мастер-класса и «+» · заодно состояние «Сохранено»: «Посмотреть как ученик» доступна</span></div>
+<div class="frame adm" data-from="f1" data-class="collapsed" data-saved="1" data-mode="steps"></div>
+
+<div class="cap"><b>2и. Удаление мастер-класса</b><span>модалка с предупреждением, открывается по значку корзины в списке</span></div>
+<div class="frame adm dim" data-from="f1" data-modal="m-mk"></div>
+
+<div class="cap"><b>2к. Удаление фрагмента</b><span>то же для фрагмента</span></div>
+<div class="frame adm dim" data-from="f1" data-modal="m-frag"></div>
+
+<template id="m-mk">
+  <div class="scrim"><div class="modal wide">
+    <div class="mo-h">Удалить мастер-класс?</div>
+    <div class="mo-b"><div class="mo-warn"><svg class="ic"><use href="#i-warn"/></svg><div>«МК-3: Адресная лента WS2812» будет удалён вместе с 4 фрагментами и описаниями 11 шагов. Это действие нельзя отменить.</div></div></div>
+    <div class="mo-f"><button class="btn">Отмена</button><button class="btn btn-d"><svg class="ic"><use href="#i-trash"/></svg>Удалить мастер-класс</button></div>
+  </div></div>
+</template>
+<template id="m-frag">
+  <div class="scrim"><div class="modal wide">
+    <div class="mo-h">Удалить фрагмент 4?</div>
+    <div class="mo-b"><div class="mo-warn"><svg class="ic"><use href="#i-warn"/></svg><div>Фрагмент из 4 строк будет удалён, вместе с ним пропадут описания трёх шагов («void loop() {», «fill_solid…», «FastLED.show();»). Изменения вступят в силу после сохранения.</div></div></div>
+    <div class="mo-f"><button class="btn">Отмена</button><button class="btn btn-d"><svg class="ic"><use href="#i-trash"/></svg>Удалить фрагмент</button></div>
+  </div></div>
+</template>
+<template id="m-stage">
+  <div class="scrim"><div class="modal wide">
+    <div class="mo-h">Удалить этап?</div>
+    <div class="mo-b"><div class="mo-warn"><svg class="ic"><use href="#i-warn"/></svg><div>Этап «Лента белым цветом» будет удалён вместе с 4 фрагментами и описаниями 11 шагов. Изменения вступят в силу после сохранения.</div></div></div>
+    <div class="mo-f"><button class="btn">Отмена</button><button class="btn btn-d"><svg class="ic"><use href="#i-trash"/></svg>Удалить этап</button></div>
+  </div></div>
+</template>
+<template id="m-reparse">
+  <div class="scrim"><div class="modal wide">
+    <div class="mo-h">Разобрать код заново?</div>
+    <div class="mo-b">
+      <span>Код фрагментов изменился с прошлого разбора.</span>
+      <ul class="mo-list">
+        <li>Описания сохранятся у <b>9</b> строк, которые не изменились.</li>
+        <li>Описания <b>2</b> изменённых или удалённых строк пропадут.</li>
+        <li><b>3</b> новые строки будут без описания.</li>
+      </ul>
+    </div>
+    <div class="mo-f"><button class="btn">Отмена</button><button class="btn btn-p">Разобрать заново</button></div>
+  </div></div>
+</template>
+
+<template id="t-empty">
+  <section class="panel"><div class="panel-b" style="padding-top:var(--sp-20)"><div class="row2">
+    <div class="fld"><label>Название мастер-класса</label><div class="in"><input type="text" value="" placeholder="Например: МК-7: Название"></div></div>
+    <div class="fld"><label>Язык</label><select><option>Arduino</option><option>Python</option></select></div>
+  </div></div></section>
+  <section class="panel sec-stages"><div class="panel-h"><div><h2>Этапы</h2><p>Каждый этап — отдельный код. Ученик выбирает этап в списке в шапке.</p></div><span class="cnt">1 этап</span></div><div class="panel-b"><div class="stabs"><button class="stab on"><span class="sq2">1</span>Новый этап</button><button class="stab plus"><svg class="ic"><use href="#i-plus"/></svg>Этап</button></div><div class="stage-edit"><div class="fld"><label>Название этапа</label><div class="in"><input type="text" value="" placeholder="Например: Бегущий огонёк"></div></div><button class="btn btn-dl" disabled title="Нельзя удалить единственный этап"><svg class="ic"><use href="#i-trash"/></svg>Удалить этап</button></div></div></section>
+  <section class="panel sec-frags">
+    <div class="panel-h"><div><h2>Фрагменты</h2><p>Вставьте код кусками. Порядок фрагментов между собой неизменен.</p></div><span class="cnt">1 фрагмент</span></div>
+    <div class="panel-b">
+      <div class="frag open">
+        <div class="frag-h"><span class="frag-n">1</span><span class="ttl">Фрагмент 1</span><span class="cnt">пусто</span>
+          <button class="ib" disabled aria-label="Выше"><svg class="ic"><use href="#i-up"/></svg></button>
+          <button class="ib" disabled aria-label="Ниже"><svg class="ic"><use href="#i-down"/></svg></button>
+          <button class="ib del" disabled aria-label="Удалить фрагмент"><svg class="ic"><use href="#i-trash"/></svg></button>
+          <button class="ib" aria-label="Свернуть"><svg class="ic"><use href="#i-up"/></svg></button>
+        </div>
+        <div class="frag-b">
+          <textarea class="code" spellcheck="false" placeholder="Вставьте сюда кусок рабочего кода"></textarea>
+          <div class="tools">
+            <span class="switch"><span class="track"></span><b>Выключено</b><span>Строки можно менять местами</span></span>
+            <button class="btn btn-s" disabled><svg class="ic"><use href="#i-align"/></svg>Выровнять отступы</button>
+          </div>
+        </div>
+      </div>
+      <button class="add"><svg class="ic"><use href="#i-plus"/></svg>Фрагмент</button>
+    </div>
+    <div class="parse-row"><span>Вставьте код хотя бы в один фрагмент.</span><button class="btn btn-p" disabled>Разобрать на шаги<svg class="ic"><use href="#i-arrow-r"/></svg></button></div>
+  </section>
+</template>
+
+<template id="t-newstage">
+  <section class="panel"><div class="panel-b" style="padding-top:var(--sp-20)"><div class="row2"><div class="fld"><label>Название мастер-класса</label><div class="in"><input type="text" value="МК-3: Адресная лента WS2812"></div></div><div class="fld"><label>Язык</label><select><option>Arduino</option><option>Python</option></select></div></div></div></section>
+  <section class="panel sec-stages"><div class="panel-h"><div><h2>Этапы</h2><p>Каждый этап — отдельный код. Ученик выбирает этап в списке в шапке.</p></div><span class="cnt">4 этапа</span></div><div class="panel-b"><div class="stabs"><button class="stab"><span class="sq2">1</span>Лента белым цветом</button><button class="stab"><span class="sq2">2</span>Бегущий огонёк</button><button class="stab"><span class="sq2">3</span>Плавная радуга</button><button class="stab on"><span class="sq2">4</span>Новый этап</button><button class="stab plus"><svg class="ic"><use href="#i-plus"/></svg>Этап</button></div><div class="stage-edit"><div class="fld"><label>Название этапа</label><div class="in"><input type="text" value="" placeholder="Например: Мигание"></div></div><button class="btn btn-dl"><svg class="ic"><use href="#i-trash"/></svg>Удалить этап</button></div></div></section>
+  <section class="panel sec-frags">
+    <div class="panel-h"><div><h2>Фрагменты</h2><p>Вставьте код кусками. Порядок фрагментов между собой неизменен.</p></div><span class="cnt">1 фрагмент</span></div>
+    <div class="panel-b">
+      <div class="frag open">
+        <div class="frag-h"><span class="frag-n">1</span><span class="ttl">Фрагмент 1</span><span class="cnt">пусто</span>
+          <button class="ib" disabled aria-label="Выше"><svg class="ic"><use href="#i-up"/></svg></button>
+          <button class="ib" disabled aria-label="Ниже"><svg class="ic"><use href="#i-down"/></svg></button>
+          <button class="ib del" disabled aria-label="Удалить фрагмент"><svg class="ic"><use href="#i-trash"/></svg></button>
+          <button class="ib" aria-label="Свернуть"><svg class="ic"><use href="#i-up"/></svg></button>
+        </div>
+        <div class="frag-b">
+          <textarea class="code" spellcheck="false" placeholder="Вставьте сюда кусок рабочего кода"></textarea>
+          <div class="tools">
+            <span class="switch"><span class="track"></span><b>Выключено</b><span>Строки можно менять местами</span></span>
+            <button class="btn btn-s" disabled><svg class="ic"><use href="#i-align"/></svg>Выровнять отступы</button>
+          </div>
+        </div>
+      </div>
+      <button class="add"><svg class="ic"><use href="#i-plus"/></svg>Фрагмент</button>
+    </div>
+    <div class="parse-row"><span>Вставьте код хотя бы в один фрагмент.</span><button class="btn btn-p" disabled>Разобрать на шаги<svg class="ic"><use href="#i-arrow-r"/></svg></button></div>
+  </section>
+</template>
+
+<script>
+/* Только для макета: остальные артборды — копии первого в другом состоянии */
+window.addEventListener('load', function () {
+  var src = document.getElementById('f1');
+  document.querySelectorAll('[data-from]').forEach(function (f) {
+    f.innerHTML = src.innerHTML;
+    if (f.dataset.mode) { f.classList.remove('mode-frags'); f.classList.add('mode-' + f.dataset.mode); }
+    else f.classList.add('mode-frags');
+    if (f.dataset.class) f.classList.add(f.dataset.class);
+    if (f.dataset.col) {
+      f.querySelector('.col').innerHTML = document.getElementById(f.dataset.col).innerHTML;
+      if (f.dataset.title) {
+        f.querySelector('.head h1').textContent = f.dataset.title;
+        f.querySelectorAll('.mk.on').forEach(function (m) { m.classList.remove('on'); });
+        var nm = document.createElement('div'); nm.className = 'mk on';
+        nm.innerHTML = '<span class="sq">Нов</span><span class="t">Новый мастер-класс</span><button class="del" aria-label="Удалить мастер-класс"><svg class="ic"><use href="#i-trash"/></svg></button>';
+        f.querySelector('.tree-l').prepend(nm);
+      }
+    }
+    if (f.dataset.saved) {
+      f.querySelector('.hr .badge').className = 'badge b-ok';
+      f.querySelector('.hr .badge').innerHTML = '<svg class="ic" style="margin-right:6px"><use href="#i-check"/></svg>Сохранено';
+      var v = f.querySelector('.hr .btn[disabled]'); v.disabled = false; v.title = '';
+      f.querySelector('.hr .btn-p').disabled = true;
+    }
+    if (f.dataset.modal) f.appendChild(document.getElementById(f.dataset.modal).content.cloneNode(true));
+    if (f.dataset.scroll) f.querySelector('.main').scrollTop = +f.dataset.scroll;
+  });
+});
+</script>
+</body>
+</html>

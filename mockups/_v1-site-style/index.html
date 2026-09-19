@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Конструктор кода — макеты</title>
+<!-- Только для просмотра макета. В рабочем приложении сети нет: Ubuntu кладётся рядом файлом. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="mockups.css">
+</head>
+<body>
+
+<!-- иконки -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-approx" viewBox="0 0 24 24"><path d="M5 9c2-2.5 4-2.5 7 0s5 2.5 7 0M5 15c2-2.5 4-2.5 7 0s5 2.5 7 0"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 .5c0 1.7-2.5 2-2.5 3.5M12 17h.01"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></symbol>
+  <symbol id="i-align" viewBox="0 0 24 24"><path d="M4 6h16M9 12h11M13 18h7M4 10l3 2-3 2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></symbol>
+</svg>
+
+<div class="sheet-title">
+  <h1>Конструктор кода — макеты экранов</h1>
+  <p>Экран 1280–1440 px, мышь и клавиатура. Стиль — дизайн-система «Шаг в будущее»: цвета, шрифт, отступы и радиусы взяты из неё без изменений (<code>tokens.css</code>).
+  Состояния блока различаются не цветом, а формой контура и значком: см. образец в разделе 2г.</p>
+</div>
+
+
+<!-- ═══════════════ 1. СТАРТОВЫЙ ЭКРАН ═══════════════ -->
+<div class="cap"><b>1. Стартовый экран</b><span>1440 × 900</span></div>
+<div class="frame start">
+  <header class="s-top">
+    <div class="brand"><b>Конструктор кода</b><span>Мастер-классы по программированию и электронике</span></div>
+    <button class="btn"><svg class="ic"><use href="#i-key"/></svg>Администрирование</button>
+  </header>
+  <main class="s-main">
+    <h1>Выбери мастер-класс</h1>
+    <p>Нажми на карточку — и начнём собирать программу.</p>
+    <div class="grid3">
+      <button class="wcard hover"><div class="row"><span class="tile" style="background:var(--subject-blue)">МК-3</span><span class="badge" style="background:var(--accent-soft);color:var(--accent-700)">Arduino</span></div><h3>МК-3: Адресная лента WS2812</h3><span class="go">Начать <svg class="ic"><use href="#i-arrow"/></svg></span></button>
+      <button class="wcard"><div class="row"><span class="tile" style="background:var(--subject-blue)">МК-1</span><span class="badge" style="background:var(--accent-soft);color:var(--accent-700)">Arduino</span></div><h3>МК-1: Светодиод и кнопка</h3><span class="go">Начать <svg class="ic"><use href="#i-arrow"/></svg></span></button>
+      <button class="wcard"><div class="row"><span class="tile" style="background:var(--subject-blue)">МК-2</span><span class="badge" style="background:var(--accent-soft);color:var(--accent-700)">Arduino</span></div><h3>МК-2: Датчик расстояния</h3><span class="go">Начать <svg class="ic"><use href="#i-arrow"/></svg></span></button>
+      <button class="wcard"><div class="row"><span class="tile" style="background:var(--subject-green)">Py-1</span><span class="badge" style="background:var(--ok-soft);color:var(--ok)">Python</span></div><h3>Py-1: Первая программа</h3><span class="go">Начать <svg class="ic"><use href="#i-arrow"/></svg></span></button>
+      <button class="wcard"><div class="row"><span class="tile" style="background:var(--subject-green)">Py-2</span><span class="badge" style="background:var(--ok-soft);color:var(--ok)">Python</span></div><h3>Py-2: Циклы и условия</h3><span class="go">Начать <svg class="ic"><use href="#i-arrow"/></svg></span></button>
+      <button class="wcard"><div class="row"><span class="tile" style="background:var(--subject-purple)">Py-3</span><span class="badge" style="background:var(--ok-soft);color:var(--ok)">Python</span></div><h3>Py-3: Списки</h3><span class="go">Начать <svg class="ic"><use href="#i-arrow"/></svg></span></button>
+    </div>
+  </main>
+</div>
+
+<div class="cap"><b>1б. Вход в администрирование</b><span>модалка с паролем · 1440 × 560 (список за модалкой затемнён)</span></div>
+<div class="frame dim" style="height:560px">
+  <header class="s-top">
+    <div class="brand"><b>Конструктор кода</b><span>Мастер-классы по программированию и электронике</span></div>
+    <button class="btn"><svg class="ic"><use href="#i-key"/></svg>Администрирование</button>
+  </header>
+  <main class="s-main" style="padding-top:var(--space-4xl)">
+    <h1>Выбери мастер-класс</h1>
+    <div class="grid3">
+      <div class="wcard"><div class="row"><span class="tile" style="background:var(--subject-blue)">МК-3</span></div><h3>МК-3: Адресная лента WS2812</h3></div>
+      <div class="wcard"><div class="row"><span class="tile" style="background:var(--subject-blue)">МК-1</span></div><h3>МК-1: Светодиод и кнопка</h3></div>
+      <div class="wcard"><div class="row"><span class="tile" style="background:var(--subject-blue)">МК-2</span></div><h3>МК-2: Датчик расстояния</h3></div>
+    </div>
+  </main>
+  <div class="scrim">
+    <div class="modal" style="width:30rem">
+      <span class="round" style="background:var(--accent-soft);color:var(--accent)"><svg class="ic"><use href="#i-key"/></svg></span>
+      <h2>Вход в администрирование</h2>
+      <p class="sub">Введи пароль преподавателя.</p>
+      <div>
+        <label class="label">Пароль</label>
+        <div class="pw"><input class="input" type="password" value="••••••••"><svg class="ic"><use href="#i-eye"/></svg></div>
+      </div>
+      <div class="acts"><button class="btn">Отмена</button><button class="btn btn-accent">Войти</button></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ 2. ЭКРАН УЧЕНИКА ═══════════════ -->
+<div class="cap"><b>2. Экран ученика</b><span>1440 × 900 · до проверки: открыт «void loop() {», подсказка включена</span></div>
+<div class="frame stu">
+  <header class="top">
+    <div class="l">
+      <div class="crumb">МК-3: Адресная лента WS2812 · этап 2 из 4</div>
+      <h1>Зажечь ленту белым</h1>
+      <p class="notes"><code>LED_PIN</code> — пин, к которому подключена лента. <code>NUM_LEDS</code> — сколько на ней светодиодов.</p>
+    </div>
+    <div class="r">
+      <button class="select"><span><small>Этап</small><br>Зажечь ленту белым</span><svg class="ic"><use href="#i-down"/></svg></button>
+      <button class="btn btn-hint"><svg class="ic"><use href="#i-bulb"/></svg>Подсказка <small style="font-weight:400">· 1</small></button>
+      <button class="btn"><svg class="ic"><use href="#i-home"/></svg>В начало</button>
+    </div>
+  </header>
+
+  <div class="cols">
+    <!-- рабочая область -->
+    <section class="panel">
+      <div class="panel-h"><div><h2>Твоя программа</h2><p>Кликни по блоку справа — он встанет в пустой слот. Кликни по блоку здесь — он вернётся обратно.</p></div></div>
+      <div class="panel-b">
+        <div class="tree">
+          <div class="blk slotted"><span class="code">#define LED_PIN 5</span><span class="ud"><span><svg class="ic"><use href="#i-up"/></svg></span><span><svg class="ic"><use href="#i-down"/></svg></span></span></div>
+          <div class="blk slotted"><span class="code">#define NUM_LEDS 30</span><span class="ud"><span><svg class="ic"><use href="#i-up"/></svg></span><span><svg class="ic"><use href="#i-down"/></svg></span></span></div>
+          <div class="slot-empty hint"><svg class="ic"><use href="#i-help"/></svg>Подсказка: сюда встанет блок «#define POT A0»</div>
+          <div class="slot-empty">Пустой слот — кликни по блоку справа</div>
+          <div class="blk slotted"><span class="code">CRGB leds[NUM_LEDS];</span><span class="ud"><span><svg class="ic"><use href="#i-up"/></svg></span><span><svg class="ic"><use href="#i-down"/></svg></span></span></div>
+          <div class="slot-empty">Пустой слот — кликни по блоку справа</div>
+          <div class="node">
+            <div class="blk slotted"><span class="code">void loop() {</span><span class="ud"><span><svg class="ic"><use href="#i-up"/></svg></span><span><svg class="ic"><use href="#i-down"/></svg></span></span></div>
+            <div class="kids">
+              <div class="slot-empty">Пустой слот — кликни по блоку справа</div>
+              <div class="slot-empty">Пустой слот — кликни по блоку справа</div>
+            </div>
+            <div class="tail"><svg class="ic"><use href="#i-lock"/></svg>}</div>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Проверить можно, когда заполнены все слоты.</span><button class="btn btn-primary btn-lg" disabled>Проверить</button></div>
+    </section>
+
+    <!-- палитра -->
+    <section>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
+        <h2 style="font-size:var(--fs-lg);font-weight:700">Блоки</h2>
+        <span class="count">осталось блоков: <b>7</b></span>
+      </div>
+      <div class="panel"><div class="panel-b">
+        <div class="blk pal"><svg class="ic lead"><use href="#i-plus"/></svg><span class="code">fill_solid(leds, NUM_LEDS, CRGB::<span class="fld sel">White<svg class="ic"><use href="#i-down"/></svg></span>);</span></div>
+        <div class="blk pal"><svg class="ic lead"><use href="#i-plus"/></svg><span class="code">FastLED.setBrightness(200);</span></div>
+        <div class="blk pal"><svg class="ic lead"><use href="#i-plus"/></svg><span class="code">#include &lt;FastLED.h&gt;</span></div>
+        <div class="blk pal"><svg class="ic lead"><use href="#i-plus"/></svg><span class="code">void setup() {</span></div>
+        <div class="blk hint"><svg class="ic lead"><use href="#i-help"/></svg><span class="code">#define POT A0</span></div>
+        <div class="blk pal"><svg class="ic lead"><use href="#i-plus"/></svg><span class="code">FastLED.show();</span></div>
+        <div class="blk pal"><svg class="ic lead"><use href="#i-plus"/></svg><span class="code">FastLED.addLeds&lt;WS2812, LED_PIN, GRB&gt;(leds, NUM_LEDS);</span></div>
+      </div></div>
+    </section>
+  </div>
+</div>
+
+
+<!-- 2б. после проверки -->
+<div class="cap"><b>2б. Результат проверки</b><span>все слоты заполнены · подсвечены все ошибки сразу, не первая</span></div>
+<div class="frame stu">
+  <header class="top">
+    <div class="l">
+      <div class="crumb">МК-3: Адресная лента WS2812 · этап 2 из 4</div>
+      <h1>Зажечь ленту белым</h1>
+      <p class="notes"><code>LED_PIN</code> — пин, к которому подключена лента. <code>NUM_LEDS</code> — сколько на ней светодиодов.</p>
+    </div>
+    <div class="r">
+      <button class="select"><span><small>Этап</small><br>Зажечь ленту белым</span><svg class="ic"><use href="#i-down"/></svg></button>
+      <button class="btn btn-hint"><svg class="ic"><use href="#i-bulb"/></svg>Подсказка <small style="font-weight:400">· 1</small></button>
+      <button class="btn"><svg class="ic"><use href="#i-home"/></svg>В начало</button>
+    </div>
+  </header>
+  <div class="cols">
+    <section class="panel">
+      <div class="banner"><svg class="ic"><use href="#i-warn"/></svg><div><b>Почти получилось!</b> Два блока стоят не на своих местах, и в одной строке неверное значение. Остальное уже правильно.</div></div>
+      <div class="panel-b">
+        <div class="tree">
+          <div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">#define LED_PIN 5</span><span class="tag">верно</span></div>
+          <div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">#define NUM_LEDS 30</span><span class="tag">верно</span></div>
+          <div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">#define POT A0</span><span class="tag">верно</span></div>
+          <div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">#include &lt;FastLED.h&gt;</span><span class="tag">верно</span></div>
+          <div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">CRGB leds[NUM_LEDS];</span><span class="tag">верно</span></div>
+          <div class="node">
+            <div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">void setup() {</span><span class="tag">верно</span></div>
+            <div class="kids">
+              <div class="blk wrong"><svg class="ic lead"><use href="#i-x"/></svg><span class="code">FastLED.setBrightness(200);</span><span class="tag">не здесь</span></div>
+              <div class="blk wrong"><svg class="ic lead"><use href="#i-x"/></svg><span class="code">FastLED.addLeds&lt;WS2812, LED_PIN, GRB&gt;(leds, NUM_LEDS);</span><span class="tag">не здесь</span></div>
+            </div>
+            <div class="tail"><svg class="ic"><use href="#i-lock"/></svg>}</div>
+          </div>
+          <div class="node">
+            <div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">void loop() {</span><span class="tag">верно</span></div>
+            <div class="kids">
+              <div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">fill_solid(leds, NUM_LEDS, CRGB::<span class="fld bad">Blue<svg class="ic"><use href="#i-x"/></svg></span>);</span><span class="tag">поле неверно</span></div>
+              <div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">FastLED.show();</span><span class="tag">верно</span></div>
+            </div>
+            <div class="tail"><svg class="ic"><use href="#i-lock"/></svg>}</div>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Поменяй подсвеченные блоки местами и проверь ещё раз.</span><button class="btn btn-primary btn-lg">Проверить ещё раз</button></div>
+    </section>
+
+    <section>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
+        <h2 style="font-size:var(--fs-lg);font-weight:700">Блоки</h2>
+        <span class="count">осталось блоков: <b>0</b></span>
+      </div>
+      <div class="panel"><div class="panel-b" style="align-items:center;padding:calc(var(--space-4xl) * 2) var(--space-xl);text-align:center;color:var(--text-secondary);gap:var(--space-md)">
+        <span class="round" style="background:var(--ok-soft);color:var(--ok)"><svg class="ic"><use href="#i-check"/></svg></span>
+        <b style="font-size:var(--fs-md)">Все блоки разложены</b>
+        <span>Кликни по блоку слева, чтобы вернуть его сюда.</span>
+      </div></div>
+    </section>
+  </div>
+</div>
+
+
+<!-- 2в. успех -->
+<div class="cap"><b>2в. Успешная проверка</b><span>модалка с галочкой и «Скопировать код»</span></div>
+<div class="frame dim" style="height:760px">
+  <div class="fauxbar"></div>
+  <div class="fauxcols"><div></div><div></div></div>
+  <div class="scrim">
+    <div class="modal" style="width:40rem;align-items:center;text-align:center">
+      <span class="round" style="background:var(--ok-soft);color:var(--ok);width:5rem;height:5rem;border:3px solid var(--ok)"><svg class="ic"><use href="#i-check"/></svg></span>
+      <h2>Молодец! Программа собрана верно</h2>
+      <p class="sub">Скопируй код и вставь его в Arduino IDE.</p>
+      <div class="code-view" style="text-align:left;width:100%">#define LED_PIN 5
+#define NUM_LEDS 30
+#define POT A0
+#include &lt;FastLED.h&gt;
+
+CRGB leds[NUM_LEDS];
+
+void setup() {
+  FastLED.addLeds&lt;WS2812, LED_PIN, GRB&gt;(leds, NUM_LEDS);
+  FastLED.setBrightness(200);
+}
+
+void loop() {
+  fill_solid(leds, NUM_LEDS, CRGB::White);
+  FastLED.show();
+}</div>
+      <div class="acts" style="justify-content:center;width:100%">
+        <button class="btn btn-primary btn-lg"><svg class="ic"><use href="#i-copy"/></svg>Скопировать код</button>
+        <button class="btn btn-lg">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 2г. образец состояний -->
+<div class="cap"><b>2г. Образец состояний блока</b><span>у каждого состояния своя форма контура и значок — цвет только усиливает</span></div>
+<div class="frame">
+  <div class="spec">
+
+    <div class="cell"><h3>1. В палитре</h3>
+      <p class="how">Белый блок, серый контур, значок «+» слева. Ещё не поставлен.</p>
+      <div class="demo"><div class="blk pal"><svg class="ic lead"><use href="#i-plus"/></svg><span class="code">#include &lt;FastLED.h&gt;</span></div></div></div>
+
+    <div class="cell"><h3>2. В слоте</h3>
+      <p class="how">Синяя заливка, сплошной контур 2 px, стрелки ↑↓ справа.</p>
+      <div class="demo"><div class="blk slotted"><span class="code">CRGB leds[NUM_LEDS];</span><span class="ud"><span><svg class="ic"><use href="#i-up"/></svg></span><span><svg class="ic"><use href="#i-down"/></svg></span></span></div></div></div>
+
+    <div class="cell"><h3>3. Верный</h3>
+      <p class="how">Зелёная заливка, сплошной контур, значок ✓ и подпись «верно».</p>
+      <div class="demo"><div class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">FastLED.show();</span><span class="tag">верно</span></div></div></div>
+
+    <div class="cell"><h3>4. Почти верный</h3>
+      <p class="how">Жёлтая заливка, <b>пунктирный</b> контур, значок ≈. Различия подсвечены и подчёркнуты — в блоке и в его двойнике.</p>
+      <div class="demo">
+        <div class="blk near"><svg class="ic lead"><use href="#i-approx"/></svg><span class="code">leds[<mark>1</mark>] = CRGB::Red;</span><span class="tag">почти</span></div>
+        <div class="arrow">а нужна близкая строка:</div>
+        <div class="blk pal"><svg class="ic lead"><use href="#i-plus"/></svg><span class="code">leds[<mark>0</mark>] = CRGB::Red;</span></div>
+      </div>
+      <p class="how" style="color:var(--muted)">Пример пары-близнецов взят из другого этапа: в этапе «Зажечь ленту белым» таких строк нет.</p></div>
+
+    <div class="cell"><h3>5. Неверный</h3>
+      <p class="how">Красная <b>штриховка</b>, толстый контур 3 px, значок ✕ и подпись.</p>
+      <div class="demo"><div class="blk wrong"><svg class="ic lead"><use href="#i-x"/></svg><span class="code">FastLED.show();</span><span class="tag">не здесь</span></div></div></div>
+
+    <div class="cell"><h3>6. Подсвечен подсказкой</h3>
+      <p class="how">Двойной синий контур, значок «?». Подсвечены блок в палитре и его слот.</p>
+      <div class="demo">
+        <div class="blk hint"><svg class="ic lead"><use href="#i-help"/></svg><span class="code">#define POT A0</span></div>
+        <div class="slot-empty hint"><svg class="ic"><use href="#i-help"/></svg>Сюда встанет этот блок</div>
+      </div></div>
+
+    <div class="cell"><h3>7. Слот пустой</h3>
+      <p class="how">Пунктирный серый контур, без заливки, курсивная подпись.</p>
+      <div class="demo"><div class="slot-empty">Пустой слот — кликни по блоку справа</div></div></div>
+
+    <div class="cell"><h3>8. Хвост</h3>
+      <p class="how">Серая плашка без контура, значок замка. Появляется сама вместе с открывающим блоком, не берётся и не двигается.</p>
+      <div class="demo">
+        <div class="blk slotted"><span class="code">void setup() {</span></div>
+        <div class="tail"><svg class="ic"><use href="#i-lock"/></svg>}</div>
+      </div></div>
+
+    <div class="cell"><h3>9. Этап пройден</h3>
+      <p class="how">В выпадающем списке: зелёный круг с ✓ и подпись «пройден». Текущий — круг с точкой, ещё не пройденный — пустой круг.</p>
+      <div class="demo">
+        <div class="menu">
+          <div class="mi done"><span class="dot done"><svg class="ic"><use href="#i-check"/></svg></span>Подключение ленты<small>пройден</small></div>
+          <div class="mi cur"><span class="dot now"></span>Зажечь ленту белым<small>сейчас</small></div>
+          <div class="mi"><span class="dot todo"></span>Эффект бегущая радуга</div>
+          <div class="mi"><span class="dot todo"></span>Яркость потенциометром</div>
+        </div>
+      </div></div>
+
+    <div class="cell wide"><h3>Поля ввода внутри строки</h3>
+      <p class="how">Ширина поля — длина эталона + 2 символа. До проверки поле всегда синее (список со стрелкой ▾ или текст). После проверки — по образцу блоков: значок и форма контура.</p>
+      <div class="two">
+        <div class="demo">
+          <div class="blk pal"><span class="code">fill_solid(leds, NUM_LEDS, CRGB::<span class="fld sel">White<svg class="ic"><use href="#i-down"/></svg></span>);</span></div>
+          <div class="blk pal"><span class="code">fill_solid(leds, NUM_LEDS, CRGB::<span class="fld">Wh|</span>);</span></div>
+          <div class="blk pal"><span class="code">fill_solid(leds, NUM_LEDS, CRGB::<span class="fld empty">пусто</span>);</span></div>
+        </div>
+        <div class="demo">
+          <div class="blk ok"><span class="code">fill_solid(leds, NUM_LEDS, CRGB::<span class="fld good">White<svg class="ic"><use href="#i-check"/></svg></span>);</span></div>
+          <div class="blk ok"><span class="code">fill_solid(leds, NUM_LEDS, CRGB::<span class="fld case">white<svg class="ic"><use href="#i-approx"/></svg></span>);</span><span class="tag" style="color:var(--wait)">проверь заглавные</span></div>
+          <div class="blk ok"><span class="code">fill_solid(leds, NUM_LEDS, CRGB::<span class="fld bad">Blue<svg class="ic"><use href="#i-x"/></svg></span>);</span></div>
+        </div>
+      </div>
+      <p class="how" style="color:var(--muted)">Слева — до проверки (список, текст с курсором, пустое поле). Справа — после: верное значение, ошибка только в регистре, неверное значение.</p>
+    </div>
+
+    <div class="cell wide"><h3>Проверка без цвета</h3>
+      <p class="how">Те же состояния в оттенках серого: ряд читается по контуру и значкам.</p>
+      <div class="demo gray" style="flex-direction:row;flex-wrap:wrap;gap:var(--space-lg)">
+        <div style="flex:1;min-width:16rem" class="blk pal"><svg class="ic lead"><use href="#i-plus"/></svg><span class="code">В палитре</span></div>
+        <div style="flex:1;min-width:16rem" class="blk slotted"><span class="code">В слоте</span></div>
+        <div style="flex:1;min-width:16rem" class="blk ok"><svg class="ic lead"><use href="#i-check"/></svg><span class="code">Верный</span></div>
+        <div style="flex:1;min-width:16rem" class="blk near"><svg class="ic lead"><use href="#i-approx"/></svg><span class="code">Почти</span></div>
+        <div style="flex:1;min-width:16rem" class="blk wrong"><svg class="ic lead"><use href="#i-x"/></svg><span class="code">Неверный</span></div>
+        <div style="flex:1;min-width:16rem" class="blk hint"><svg class="ic lead"><use href="#i-help"/></svg><span class="code">Подсказка</span></div>
+        <div style="flex:1;min-width:16rem" class="slot-empty">Слот пустой</div>
+        <div style="flex:1;min-width:16rem" class="tail"><svg class="ic"><use href="#i-lock"/></svg>}</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════ 3. ЭКРАН АДМИНИСТРАТОРА ═══════════════ -->
+<div class="cap"><b>3. Экран администратора</b><span>1440 × 900 · развёрнут фрагмент 4, остальные свёрнуты</span></div>
+<div class="frame adm">
+  <header class="adm-top">
+    <div class="l"><h1>Администрирование</h1><span>Правки в памяти. Экспорт — чтобы сохранить в репозиторий.</span></div>
+    <div class="r">
+      <button class="btn"><svg class="ic"><use href="#i-eye"/></svg>Посмотреть как ученик</button>
+      <button class="btn btn-primary" style="font-size:var(--fs-base)"><svg class="ic"><use href="#i-download"/></svg>Экспорт</button>
+      <button class="btn">Выйти</button>
+    </div>
+  </header>
+
+  <div class="adm-body">
+    <aside class="adm-side">
+      <h2>Мастер-классы</h2>
+      <div class="mk on">МК-3: Адресная лента WS2812<small>Arduino · 4 этапа</small></div>
+      <div class="mk">МК-1: Светодиод и кнопка<small>Arduino · 3 этапа</small></div>
+      <div class="mk">МК-2: Датчик расстояния<small>Arduino · 3 этапа</small></div>
+      <div class="mk">Py-1: Первая программа<small>Python · 5 этапов</small></div>
+      <div class="mk">Py-2: Циклы и условия<small>Python · 4 этапа</small></div>
+      <div class="mk">Py-3: Списки<small>Python · 4 этапа</small></div>
+      <button class="btn"><svg class="ic"><use href="#i-plus"/></svg>Мастер-класс</button>
+    </aside>
+
+    <section class="adm-ed">
+      <div class="row2">
+        <div><label class="label">Название мастер-класса</label><input class="input" value="МК-3: Адресная лента WS2812"></div>
+        <div><label class="label">Язык (только подсветка)</label><button class="select" style="width:100%;min-width:0">Arduino<svg class="ic"><use href="#i-down"/></svg></button></div>
+      </div>
+
+      <div>
+        <div class="sec-h"><h2>Этапы</h2><span>4 этапа</span></div>
+        <div class="stages">
+          <span class="chip">1 · Подключение ленты</span>
+          <span class="chip on">2 · Зажечь ленту белым</span>
+          <span class="chip">3 · Эффект бегущая радуга</span>
+          <span class="chip">4 · Яркость потенциометром</span>
+          <span class="chip add"><svg class="ic"><use href="#i-plus"/></svg>Этап</span>
+        </div>
+      </div>
+
+      <div class="panel stagebox">
+        <div><label class="label">Название этапа</label><input class="input" value="Зажечь ленту белым"></div>
+        <div><label class="label">Пояснение над этапом (сюда переезжают комментарии из кода)</label>
+          <textarea class="input plain">LED_PIN — пин, к которому подключена лента. NUM_LEDS — сколько на ней светодиодов.</textarea></div>
+
+        <div>
+          <div class="sec-h"><h2>Фрагменты</h2><span>4 фрагмента · 11 блоков</span></div>
+          <div class="frags">
+
+            <div class="frag"><div class="frag-h">
+              <span class="frag-n">1</span>
+              <span class="frag-prev">#define LED_PIN 5</span>
+              <span class="badge" style="background:var(--accent-soft);color:var(--accent-700)">строки меняются</span>
+              <span class="cnt">4 строки</span>
+              <button class="iconbtn" disabled aria-label="Вверх"><svg class="ic"><use href="#i-up"/></svg></button>
+              <button class="iconbtn" aria-label="Вниз"><svg class="ic"><use href="#i-down"/></svg></button>
+              <button class="iconbtn danger" aria-label="Удалить"><svg class="ic"><use href="#i-trash"/></svg></button>
+              <button class="iconbtn" aria-label="Развернуть"><svg class="ic"><use href="#i-down"/></svg></button>
+            </div></div>
+
+            <div class="frag"><div class="frag-h">
+              <span class="frag-n">2</span>
+              <span class="frag-prev">CRGB leds[NUM_LEDS];</span>
+              <span class="cnt">1 строка</span>
+              <button class="iconbtn" aria-label="Вверх"><svg class="ic"><use href="#i-up"/></svg></button>
+              <button class="iconbtn" aria-label="Вниз"><svg class="ic"><use href="#i-down"/></svg></button>
+              <button class="iconbtn danger" aria-label="Удалить"><svg class="ic"><use href="#i-trash"/></svg></button>
+              <button class="iconbtn" aria-label="Развернуть"><svg class="ic"><use href="#i-down"/></svg></button>
+            </div></div>
+
+            <div class="frag"><div class="frag-h">
+              <span class="frag-n">3</span>
+              <span class="frag-prev">void setup() {</span>
+              <span class="cnt">4 строки</span>
+              <button class="iconbtn" aria-label="Вверх"><svg class="ic"><use href="#i-up"/></svg></button>
+              <button class="iconbtn" aria-label="Вниз"><svg class="ic"><use href="#i-down"/></svg></button>
+              <button class="iconbtn danger" aria-label="Удалить"><svg class="ic"><use href="#i-trash"/></svg></button>
+              <button class="iconbtn" aria-label="Развернуть"><svg class="ic"><use href="#i-down"/></svg></button>
+            </div></div>
+
+            <div class="frag open">
+              <div class="frag-h">
+                <span class="frag-n">4</span>
+                <span class="title">Фрагмент 4</span>
+                <span class="cnt">4 строки</span>
+                <button class="iconbtn" aria-label="Вверх"><svg class="ic"><use href="#i-up"/></svg></button>
+                <button class="iconbtn" disabled aria-label="Вниз"><svg class="ic"><use href="#i-down"/></svg></button>
+                <button class="iconbtn danger" aria-label="Удалить"><svg class="ic"><use href="#i-trash"/></svg></button>
+                <button class="iconbtn" aria-label="Свернуть"><svg class="ic"><use href="#i-up"/></svg></button>
+              </div>
+              <div class="frag-b">
+                <textarea class="code" spellcheck="false">void loop() {
+  fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue}});
+  FastLED.show();
+}</textarea>
+                <div class="tools">
+                  <span class="switch"><span class="track"></span><span><b>Выключено</b></span><span>Строки можно менять местами</span></span>
+                  <button class="btn"><svg class="ic"><use href="#i-align"/></svg>Выровнять отступы</button>
+                </div>
+                <p class="meta">Блоков: 3 · хвост: 1 · шаг отступа: 2 · полей ввода: 1 (список из 3 значений)</p>
+              </div>
+            </div>
+
+          </div>
+          <div style="margin-top:var(--space-md)"><button class="add-frag"><svg class="ic"><use href="#i-plus"/></svg>Фрагмент</button></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+
+<!-- 3б. после экспорта -->
+<div class="cap"><b>3б. После экспорта</b><span>инструкция, которую интерфейс обязан показать</span></div>
+<div class="frame dim" style="height:520px">
+  <div class="adm-top"><div class="l"><h1>Администрирование</h1></div></div>
+  <div class="scrim">
+    <div class="modal" style="width:42rem">
+      <span class="round" style="background:var(--ok-soft);color:var(--ok)"><svg class="ic"><use href="#i-download"/></svg></span>
+      <h2>Файл mk3.js скачан</h2>
+      <p class="sub">Положите его в папку <code style="font-family:var(--font-mono)">workshops/</code> поверх старого. Если это новый мастер-класс, добавьте строку в <code style="font-family:var(--font-mono)">index.html</code>:</p>
+      <div class="export-line"><code>&lt;script src="workshops/mk3.js"&gt;&lt;/script&gt;</code><button class="btn"><svg class="ic"><use href="#i-copy"/></svg>Копировать</button></div>
+      <div class="acts"><button class="btn btn-accent">Понятно</button></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

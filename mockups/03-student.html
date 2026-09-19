@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Макет 3 — Экран ученика</title>
+<link rel="stylesheet" href="tokens.css?v=3">
+<link rel="stylesheet" href="base.css?v=3">
+<link rel="stylesheet" href="student.css?v=7">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" style="fill:var(--red-l)"/>
+      <line x1="0" y1="0" x2="0" y2="8" style="stroke:var(--red);stroke-opacity:.5;stroke-width:3"/>
+    </pattern>
+  </defs>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-approx" viewBox="0 0 24 24"><path d="M5 9c2-2.5 4-2.5 7 0s5 2.5 7 0M5 15c2-2.5 4-2.5 7 0s5 2.5 7 0"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></symbol>
+</svg>
+
+<div id="root"></div>
+
+<script>
+/* ─────────────── данные (реальный код мастер-класса) ─────────────── */
+var BL = {
+  pin:   { t: '#define LED_PIN 5',                                       ty: 'plain', f: 1 },
+  num:   { t: '#define NUM_LEDS 30',                                    ty: 'plain', f: 1 },
+  pot:   { t: '#define POT A0',                                         ty: 'plain', f: 1 },
+  inc:   { t: '#include <FastLED.h>',                                   ty: 'plain', f: 1 },
+  leds:  { t: 'CRGB leds[NUM_LEDS];',                                   ty: 'plain', f: 2 },
+  setup: { t: 'void setup() {',                                         ty: 'open',  f: 3 },
+  add:   { t: 'FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);', ty: 'plain', f: 3 },
+  bri:   { t: 'FastLED.setBrightness(200);',                            ty: 'plain', f: 3 },
+  loop:  { t: 'void loop() {',                                          ty: 'open',  f: 4 },
+  fill:  { t: 'fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue}});',  ty: 'field', f: 4 },
+  show:  { t: 'FastLED.show();',                                        ty: 'plain', f: 4 },
+  /* пример из другого этапа — только для образца «почти верный» */
+  tw1:   { t: 'leds[1] = CRGB::Red;', ty: 'plain', f: 2, mark: '1' },
+  tw0:   { t: 'leds[0] = CRGB::Red;', ty: 'plain', f: 2, mark: '0' }
+};
+var FINAL = '#define LED_PIN 5\n#define NUM_LEDS 30\n#define POT A0\n#include &lt;FastLED.h&gt;\n\nCRGB leds[NUM_LEDS];\n\nvoid setup() {\n  FastLED.addLeds&lt;WS2812, LED_PIN, GRB&gt;(leds, NUM_LEDS);\n  FastLED.setBrightness(200);\n}\n\nvoid loop() {\n  fill_solid(leds, NUM_LEDS, CRGB::White);\n  FastLED.show();\n}';
+
+/* ─────────────── помощники разметки ─────────────── */
+var ic = function (n) { return '<svg class="ic"><use href="#i-' + n + '"/></svg>'; };
+var esc = function (s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+var TAGS = { ok: ['check', 'верно'], near: ['approx', 'почти'], wrong: ['x', 'не здесь'] };
+
+function codeHtml(b, o) {
+  var t = esc(b.t);
+  if (b.mark) t = t.replace('[' + b.mark + ']', '[<mark>' + b.mark + '</mark>]');
+  return t.replace(/\{\{(.+?)\}\}/, function (m, v) {
+    var fs = o.fs || '', val = o.fv || v.split('|')[0];
+    var icon = fs === 'bad' ? ic('x') : fs === 'case' ? ic('approx') : fs === 'good' ? ic('check') : ic('down');
+    return '<span class="inl ' + fs + '">' + val + icon + '</span>';
+  });
+}
+function tail(o) {
+  var t = TAGS[o.st];
+  return t ? '<span class="tag">' + ic(t[0]) + (o.tag || t[1]) + '</span>' : (o.st === 'hint' ? '<span class="hi">' + ic('bulb') + '</span>' : '');
+}
+function pz(id, o) {           /* обычный блок */
+  o = o || {}; var b = BL[id], st = o.st || 'pal';
+  return '<div class="pz ty-' + b.ty + ' st-' + st + (o.cls ? ' ' + o.cls : '') + '" data-id="' + id + '"><i class="stripe"></i><i class="fdot f' + b.f + '"></i>' +
+    '<span class="code">' + codeHtml(b, o) + '</span>' + tail(o) + '</div>';
+}
+function cb(id, o, kids) {      /* блок с телом: буква «С» */
+  o = o || {}; var b = BL[id], st = o.st || 'slot';
+  return '<div class="pz cb ty-open st-' + st + '" data-id="' + id + '"><i class="stripe"></i>' +
+    '<div class="cb-h"><i class="fdot f' + b.f + '"></i><span class="code">' + codeHtml(b, o) + '</span>' + tail(o) + '</div>' +
+    '<div class="mouth">' + kids + '</div>' +
+    '<div class="cb-t"><span class="tl">' + ic('lock') + '}</span></div></div>';
+}
+function empty(txt, cls) { return '<div class="pz ' + (cls || 'empty') + '"><span class="ph">' + (txt || 'Перетащи блок сюда') + '</span></div>'; }
+
+/* ─────────────── экраны ─────────────── */
+function screen(v) {
+  var hint = v.hint ? 'hint' : 'pal', work, pal, desc, foot, cnt;
+  if (v.mode === 'A') {
+    work = pz('pin', { st: 'slot' }) + pz('num', { st: 'slot' }) + (v.placed ? pz('pot', { st: 'slot' }) : empty(v.drag ? 'Отпусти, чтобы поставить' : 'Перетащи блок сюда', v.drag ? 'empty drop' : 'empty')) +
+      empty() + pz('leds', { st: 'slot' }) + empty() + cb('loop', { st: 'slot' }, empty() + empty());
+    pal = pz('fill') + pz('bri') + pz('inc') + pz('setup') +
+      (v.placed ? '' : v.drag ? empty('', 'ghost') : pz('pot', { st: hint })) + pz('show') + pz('add');
+    desc = v.placed ? '<div class="stepbox"><span class="stepno">Шаг 4 из 11</span><span class="steptx">Подключите библиотеку FastLED.</span></div>' : '<div class="stepbox"><span class="stepno">Шаг 3 из 11</span><span class="steptx">Задайте пин потенциометра.</span></div>';
+    foot = '<span>Заполни все слоты, чтобы проверить</span><button class="btn btn-p btn-lg" disabled>Проверить</button>';
+    cnt = v.placed ? 6 : 7;
+  } else {
+    var ok = v.mode === 'OK', pre = v.mode === 'F', s = pre ? 'slot' : 'ok', w = pre ? 'slot' : 'wrong';
+    work = pz('pin', { st: s }) + pz('num', { st: s }) + pz('pot', { st: s }) + pz('inc', { st: s }) + pz('leds', { st: s }) +
+      cb('setup', { st: s }, ok ? pz('add', { st: s }) + pz('bri', { st: s }) : pz('bri', { st: w }) + pz('add', { st: w })) +
+      cb('loop', { st: s }, pz('fill', { st: s, fs: pre ? '' : ok ? 'good' : 'bad', fv: ok || pre ? '' : 'Blue', tag: ok || pre ? '' : 'поле неверно' }) + pz('show', { st: s }));
+    pal = '<div class="pal-empty"><span class="round">' + ic('check') + '</span><b>Все блоки разложены</b><span>Чтобы вернуть блок, перетащи его сюда.</span></div>';
+    desc = pre ? '<div class="stepbox"><span class="steptx">Всё поставлено. Нажми «Проверить»!</span></div>' : ok ? '<div class="stepbox okb">' + ic('check') + '<span class="steptx">Всё верно!</span></div>'
+              : '<div class="stepbox warn">' + ic('warn') + '<span class="steptx">Почти получилось! Проверь подсвеченные блоки.</span></div>';
+    foot = pre ? '<span>Все слоты заполнены</span><button class="btn btn-p btn-lg glow">Проверить</button>' : ok ? '<span>Этап собран верно</span><button class="btn btn-p btn-lg">Проверить</button>'
+              : '<span>Поправь подсвеченные блоки и проверь ещё раз</span><button class="btn btn-p btn-lg">Проверить</button>';
+    cnt = 0;
+  }
+  return '<header class="head"><div class="hl"><a class="home" href="#" title="К списку мастер-классов" aria-label="К списку мастер-классов"><img class="logo" src="logo.svg" alt="Шаг в будущее"></a><span class="sep"></span>' +
+      '<h1>МК-3: Адресная лента WS2812</h1></div>' +
+      '<div class="hr"><button class="select"><span><small>Этап 1 из 3</small><b>Лента белым цветом</b></span>' + ic('down') + '</button>' +
+        (v.mode === 'F' ? '<button class="btn" disabled>' + ic('bulb') + 'Подсказка</button>' : '<button class="btn btn-hint">' + ic('bulb') + 'Подсказка</button>') +
+        '<button class="btn">' + ic('home') + 'В начало</button></div></header>' +
+    '<div class="bar">' + desc + '</div>' +
+    '<div class="cols"><section class="pnl"><div class="pnl-h">Твоя программа</div><div class="pnl-b"><div class="stack">' + work + '</div></div><div class="pnl-f">' + foot + '</div></section>' +
+      '<section class="pnl"><div class="pnl-h">Блоки<span class="count">осталось блоков: <b>' + cnt + '</b></span></div><div class="pnl-b"><div class="pal">' + pal + '</div></div></section></div>';
+}
+
+var MODALS = {
+  home: '<div class="scrim"><div class="modal wide"><div class="mo-h">Очистить сборку?</div><div class="mo-b"><div class="mo-warn">' + ic('warn') +
+    '<div>Все поставленные блоки вернутся в палитру. Это действие нельзя отменить.</div></div></div>' +
+    '<div class="mo-f"><button class="btn">Отмена</button><button class="btn btn-d">Очистить</button></div></div></div>',
+  logo: '<div class="scrim"><div class="modal wide"><div class="mo-h">Вернуться к списку мастер-классов?</div><div class="mo-b"><div class="mo-warn">' + ic('warn') +
+    '<div>Собранная программа будет потеряна. Это действие нельзя отменить.</div></div></div>' +
+    '<div class="mo-f"><button class="btn">Остаться</button><button class="btn btn-d">Вернуться к списку</button></div></div></div>',
+  stage: '<div class="scrim"><div class="modal wide"><div class="mo-h">Перейти на другой этап?</div><div class="mo-b"><div class="mo-warn">' + ic('warn') +
+    '<div>Собранная на этом этапе программа будет потеряна. Это действие нельзя отменить.</div></div></div>' +
+    '<div class="mo-f"><button class="btn">Остаться</button><button class="btn btn-d">Перейти</button></div></div></div>',
+  done: '<div class="scrim"><div class="modal wide" style="width:520px"><div class="okc">' + ic('check') + '</div>' +
+    '<div class="mo-h ctr">Молодец! Этап собран верно</div><div class="mo-b"><span class="ctr">Скопируй код и вставь его в Arduino IDE.</span><div class="code-view">' + FINAL + '</div></div>' +
+    '<div class="mo-f" style="justify-content:center"><button class="btn btn-p btn-lg">' + ic('copy') + 'Скопировать код</button><button class="btn btn-lg">Закрыть</button></div></div></div>'
+};
+
+/* ─────────────── кадры ─────────────── */
+var FRAMES = [
+  { cap: '3. Экран ученика', note: '1280 × 720 · идёт сборка: блок несут к слоту, подсказка горит на одном блоке (гаснет, когда его поставили или через 30 секунд) · логотип возвращает к списку мастер-классов', mode: 'A', drag: true, hint: true },
+  { cap: '3б. Выпадающий список этапов', note: 'этапы — отдельные коды внутри мастер-класса, отметок «пройден» нет', mode: 'A', hint: true, menu: true },
+  { cap: '3в. Блок поставлен', note: 'подсказка погасла, описание перешло на следующий шаг, кнопку «Подсказка» можно нажать снова', mode: 'A', placed: true },
+  { cap: '3г. Всё поставлено, до проверки', note: 'подсказывать нечего: «Подсказка» неактивна, зато светится «Проверить»', mode: 'F' },
+  { cap: '3д. Результат проверки', note: 'подсвечены все ошибки сразу: заливка блока остаётся цветом типа, статус — контуром и значком', mode: 'B' },
+  { cap: '3е. Успех', note: 'модалка с галочкой и «Скопировать код»', mode: 'OK', modal: 'done' },
+  { cap: '3ж. «В начало»', note: 'подтверждение: кнопка очищает сборку', mode: 'A', hint: true, modal: 'home' },
+  { cap: '3з. Клик по логотипу', note: 'возврат к списку мастер-классов; подтверждение, если что-то уже поставлено', mode: 'A', hint: true, modal: 'logo' },
+  { cap: '3и. Смена этапа', note: 'выбор в списке этапов после сборки: подтверждение, если хоть один блок уже поставлен (в начальном состоянии переход без вопросов)', mode: 'A', hint: true, menu: true, modal: 'stage' }
+];
+var root = document.getElementById('root');
+FRAMES.forEach(function (fr) {
+  var c = document.createElement('div'); c.className = 'cap'; c.innerHTML = '<b>' + fr.cap + '</b><span>' + fr.note + '</span>'; root.appendChild(c);
+  var f = document.createElement('div'); f.className = 'frame stu' + (fr.modal ? ' dim' : ''); f.innerHTML = screen(fr);
+  f.dataset.drag = fr.drag ? '1' : ''; f.dataset.menu = fr.menu ? '1' : '';
+  if (fr.modal) f.insertAdjacentHTML('beforeend', MODALS[fr.modal]);
+  root.appendChild(f);
+});
+
+/* образец состояний */
+function cell(title, how, demo, cls) { return '<div class="cell ' + (cls || '') + '"><h3>' + title + '</h3><p class="how">' + how + '</p><div class="demo">' + demo + '</div></div>'; }
+var spec = '<div class="cap"><b>3к. Образец состояний блока</b><span>каждое состояние читается по форме контура и значку, цвет только усиливает</span></div><div class="frame" style="background:var(--gray0)"><div class="spec">' +
+  cell('1. В палитре', 'Отдельный блок с тенью: лежит сам по себе, не сцеплен с соседями.', pz('inc')) +
+  cell('2. В слоте', 'Блоки сцеплены выемкой и выступом, без тени: стоят стопкой.', pz('pin', { st: 'slot' }) + pz('num', { st: 'slot' })) +
+  cell('3. Верный', 'Зелёный сплошной контур 3 px, значок ✓ и подпись «верно».', pz('show', { st: 'ok' })) +
+  cell('4. Почти верный', 'Оранжевый <b>пунктирный</b> контур, значок ≈, отличающийся символ подсвечен и подчёркнут — в блоке и в его двойнике.',
+    pz('tw1', { st: 'near' }) + '<div style="text-align:center;font-size:12px;color:var(--gray6)">а нужна близкая строка:</div>' + pz('tw0') +
+    '<div style="font-size:12px;color:var(--gray6)">Пример пары-близнецов взят из другого этапа: в этом таких строк нет.</div>') +
+  cell('5. Неверный', 'Красная <b>штриховка</b>, красный контур 3 px, значок ✕ и подпись.', pz('show', { st: 'wrong' })) +
+  cell('6. Подсвечен подсказкой', 'Тонкий зелёный контур, свечение, уходящее в размытие, и лампочка. Горит на одном блоке, пока его не поставят или не пройдёт 30 секунд после нажатия, потом гаснет. Без текста.', pz('pot', { st: 'hint' }) + '<div style="display:flex;gap:12px"><button class="btn btn-hint">' + ic('bulb') + 'Подсказка</button><button class="btn" disabled>' + ic('bulb') + 'Подсказка</button></div>') +
+  cell('7. Слот пустой', 'Серый пунктирный контур без заливки и подпись. Синий пунктир — слот, над которым держат блок.', empty() + empty('Отпусти, чтобы поставить', 'empty drop')) +
+  cell('8. Хвост', 'Серая плашка с замком внутри перекладины «С»: появляется сама, не берётся, не двигается.', cb('setup', { st: 'slot' }, empty())) +
+  cell('9. Блок несут', 'Блок приподнят, чуть наклонён, с большой тенью и «подтягивается» за курсором.', '<div style="padding:8px 12px 12px">' + pz('bri', { st: 'pal', cls: 'st-lift' }) + '</div>') +
+  cell('Тип строки — полоска слева', 'Цвет полоски и заливки зависит от типа строки: синий, фиолетовый, оранжевый. Тип читается и без цвета: открывающая строка — буква «С», строка с полем — с окошком.',
+    '<div class="leg"><i style="background:var(--blue)"></i>Обычная строка</div><div class="leg"><i style="background:var(--violet)"></i>Открывающая строка (с телом)</div><div class="leg"><i style="background:var(--orange)"></i>Строка с полем ввода</div>') +
+  cell('Фрагмент — цветной кружок', 'Кружок одного цвета у всех строк одного фрагмента. Это подсказка для группировки, не единственный признак.',
+    '<div class="leg"><span class="fdot f1"></span>Фрагмент 1</div><div class="leg"><span class="fdot f2"></span>Фрагмент 2</div><div class="leg"><span class="fdot f3"></span>Фрагмент 3</div><div class="leg"><span class="fdot f4"></span>Фрагмент 4</div>') +
+  cell('Поля ввода', 'Список со стрелкой ▾ до проверки. После проверки: верно ✓, ошибка только в регистре ≈ (пунктир), неверно ✕.',
+    pz('fill', { st: 'pal' }) + pz('fill', { st: 'ok', fs: 'good' }) + pz('fill', { st: 'ok', fs: 'case', fv: 'white', tag: 'проверь заглавные' }) + pz('fill', { st: 'ok', fs: 'bad', fv: 'Blue', tag: 'поле неверно' }), '') +
+  cell('Проверка без цвета', 'Те же состояния в оттенках серого: различимы по контуру, штриховке и значкам.',
+    '<div class="gray" style="display:flex;flex-direction:column;gap:10px">' + pz('inc') + pz('pin', { st: 'slot' }) + pz('show', { st: 'ok' }) + pz('tw1', { st: 'near' }) + pz('show', { st: 'wrong' }) + pz('pot', { st: 'hint' }) + empty() + '</div>', 'wide') +
+  '</div></div>';
+root.insertAdjacentHTML('beforeend', spec);
+
+/* ─────────────── рисование пазлов (в рабочем приложении то же самое делает render.js) ─────────────── */
+function shape(el) {
+  var w = el.offsetWidth, h = el.offsetHeight; if (!w || !h) return;
+  var r = 8, d = 5;
+  var p = 'M' + r + ',0H14L18,' + d + 'H34L38,0H' + (w - r) + 'Q' + w + ',0 ' + w + ',' + r + 'V' + (h - r) + 'Q' + w + ',' + h + ' ' + (w - r) + ',' + h +
+    'H38L34,' + (h + d) + 'H18L14,' + h + 'H' + r + 'Q0,' + h + ' 0,' + (h - r) + 'V' + r + 'Q0,0 ' + r + ',0Z';
+  var m = el.querySelector(':scope > .mouth');
+  if (m) { var x = m.offsetLeft, y = m.offsetTop, mw = m.offsetWidth, mh = m.offsetHeight;
+    p += 'M' + x + ',' + y + 'H' + (x + 14) + 'L' + (x + 18) + ',' + (y + d) + 'H' + (x + 34) + 'L' + (x + 38) + ',' + y + 'H' + (x + mw) + 'V' + (y + mh) + 'H' + x + 'Z'; }
+  el.querySelectorAll(':scope > svg').forEach(function (s) { s.remove(); });
+  var NS = 'http://www.w3.org/2000/svg';
+  ['bg', 'ln'].forEach(function (cls) {
+    var s = document.createElementNS(NS, 'svg'); s.setAttribute('class', cls); s.setAttribute('width', w); s.setAttribute('height', h);
+    (cls === 'bg' ? ['f', 'h'] : ['l']).forEach(function (c) {
+      var pa = document.createElementNS(NS, 'path'); pa.setAttribute('d', p); pa.setAttribute('class', c); pa.setAttribute('fill-rule', 'evenodd'); s.appendChild(pa);
+    });
+    el.insertBefore(s, el.firstChild);
+  });
+}
+function place() {
+  document.querySelectorAll('.pz').forEach(shape);
+  document.querySelectorAll('.frame.stu').forEach(function (f) {
+    var fr = f.getBoundingClientRect();
+    if (f.dataset.drag) {
+      var drop = f.querySelector('.drop'), ghost = f.querySelector('.ghost'); if (!drop) return;
+      var dr = drop.getBoundingClientRect(), gr = ghost.getBoundingClientRect();
+      var box = document.createElement('div');
+      box.innerHTML = pz('pot', { st: 'hint', cls: 'st-lift st-drag' });
+      var el = box.firstChild; f.appendChild(el);
+      el.style.left = (dr.left - fr.left + 110) + 'px'; el.style.top = (dr.top - fr.top + 22) + 'px'; el.style.width = gr.width + 'px';
+      shape(el);
+      f.insertAdjacentHTML('beforeend', '<svg class="cursor" viewBox="0 0 24 24" style="left:' + (dr.left - fr.left + 124) + 'px;top:' + (dr.top - fr.top + 32) + 'px"><path d="M5 3l14 8-6 2 4 7-3 1-4-7-5 4z" style="fill:var(--gray9);stroke:#fff;stroke-width:1.5;stroke-linejoin:round"/></svg>');
+    }
+    if (f.dataset.menu) {
+      var sel = f.querySelector('.select').getBoundingClientRect();
+      f.insertAdjacentHTML('beforeend', '<div class="menu" style="left:' + (sel.left - fr.left) + 'px;top:' + (sel.bottom - fr.top + 4) + 'px">' +
+        '<div class="mi cur"><span class="dot"></span>Лента белым цветом<small>сейчас</small></div>' +
+        '<div class="mi"><span class="dot"></span>Бегущий огонёк</div><div class="mi"><span class="dot"></span>Плавная радуга</div></div>');
+    }
+  });
+}
+window.addEventListener('load', function () { place(); });
+</script>
+</body>
+</html>

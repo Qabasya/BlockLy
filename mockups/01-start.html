@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Макет 1 — Стартовый экран</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  /* Рабочий размер: экран 1920×1080 при масштабе 150% = 1280×720 CSS-пикселей */
+  .start { height: 720px; display: flex; flex-direction: column; }
+  .scroll { flex: 1; overflow-y: scroll; }   /* полоса прокрутки видна всегда: видно, что список длиннее экрана */
+  .scroll::-webkit-scrollbar { width: 12px; }
+  .scroll::-webkit-scrollbar-thumb { background: var(--gray5); border-radius: var(--r-pill); border: 3px solid var(--gray0); }
+  .main { width: 1024px; margin: 0 auto; padding: var(--sp-32) 0 var(--sp-40); }
+  .main h1 { font-size: var(--fs-22); font-weight: 600; line-height: 1.2; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-16); margin-top: var(--sp-20); }
+  .card { display: flex; flex-direction: column; gap: var(--sp-8); min-height: 112px; padding: var(--sp-16) var(--sp-20); background: #fff; border: 1px solid var(--gray2); border-radius: var(--r-12); box-shadow: var(--sh); text-align: left; color: inherit; }
+  .card:hover, .card.hover { border-color: var(--blue); }
+  .card h2 { font-size: var(--fs-16); font-weight: 600; line-height: 1.3; }
+  .card .badge { align-self: flex-start; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></symbol>
+</svg>
+
+<div class="cap"><b>1. Стартовый экран</b><span>1280 × 720 (1920 × 1080 при масштабе 150%) · 12 карточек помещаются без прокрутки, дальше список прокручивается</span></div>
+<div class="frame start">
+  <header class="head">
+    <img class="logo" src="logo.svg" alt="Шаг в будущее">
+    <button class="btn"><svg class="ic"><use href="#i-key"/></svg>Администрирование</button>
+  </header>
+  <div class="scroll"><main class="main">
+    <h1>Мастер-классы</h1>
+    <div class="grid">
+      <button class="card hover"><span class="badge">Arduino</span><h2>МК-3: Адресная лента WS2812</h2></button>
+      <button class="card"><span class="badge">Arduino</span><h2>МК-1: Светодиод и кнопка</h2></button>
+      <button class="card"><span class="badge">Arduino</span><h2>МК-2: Датчик расстояния</h2></button>
+      <button class="card"><span class="badge">Arduino</span><h2>МК-4: Сервопривод</h2></button>
+      <button class="card"><span class="badge">Arduino</span><h2>МК-5: Светофор</h2></button>
+      <button class="card"><span class="badge">Arduino</span><h2>МК-6: Зуммер и мелодии</h2></button>
+      <button class="card"><span class="badge">Python</span><h2>Py-1: Первая программа</h2></button>
+      <button class="card"><span class="badge">Python</span><h2>Py-2: Циклы и условия</h2></button>
+      <button class="card"><span class="badge">Python</span><h2>Py-3: Списки</h2></button>
+      <button class="card"><span class="badge">Python</span><h2>Py-4: Функции</h2></button>
+      <button class="card"><span class="badge">Python</span><h2>Py-5: Строки</h2></button>
+      <button class="card"><span class="badge">Python</span><h2>Py-6: Словари</h2></button>
+    </div>
+  </main></div>
+</div>
+
+<div class="cap"><b>1б. Вход в администрирование</b><span>модалка после нажатия кнопки · фон затемнён</span></div>
+<div class="frame dim" style="height:720px">
+  <header class="head">
+    <img class="logo" src="logo.svg" alt="Шаг в будущее">
+    <button class="btn"><svg class="ic"><use href="#i-key"/></svg>Администрирование</button>
+  </header>
+  <main class="main">
+    <h1>Мастер-классы</h1>
+    <div class="grid">
+      <div class="card"><span class="badge">Arduino</span><h2>МК-3: Адресная лента WS2812</h2></div>
+      <div class="card"><span class="badge">Arduino</span><h2>МК-1: Светодиод и кнопка</h2></div>
+      <div class="card"><span class="badge">Arduino</span><h2>МК-2: Датчик расстояния</h2></div>
+      <div class="card"><span class="badge">Arduino</span><h2>МК-4: Сервопривод</h2></div>
+      <div class="card"><span class="badge">Arduino</span><h2>МК-5: Светофор</h2></div>
+      <div class="card"><span class="badge">Arduino</span><h2>МК-6: Зуммер и мелодии</h2></div>
+    </div>
+  </main>
+  <div class="scrim">
+    <div class="modal">
+      <div class="mo-h">Вход в администрирование</div>
+      <div class="mo-b">
+        <span>Введи пароль преподавателя.</span>
+        <div class="fld"><label>Пароль</label><div class="in"><input type="password" value="••••••••"><svg class="ic"><use href="#i-eye"/></svg></div></div>
+      </div>
+      <div class="mo-f"><button class="btn">Отмена</button><button class="btn btn-p">Войти</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="cap"><b>1в. Неверный пароль</b><span>ошибка — текстом и значком, не только красной рамкой</span></div>
+<div class="frame dim" style="height:360px">
+  <div class="scrim">
+    <div class="modal">
+      <div class="mo-h">Вход в администрирование</div>
+      <div class="mo-b">
+        <span>Введи пароль преподавателя.</span>
+        <div class="fld"><label>Пароль</label><div class="in"><input type="password" value="••••" style="border-color:var(--red)"><svg class="ic"><use href="#i-eye"/></svg></div>
+          <span class="err"><svg class="ic"><use href="#i-warn"/></svg>Пароль неверный. Попробуйте ещё раз.</span></div>
+      </div>
+      <div class="mo-f"><button class="btn">Отмена</button><button class="btn btn-p">Войти</button></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

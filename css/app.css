@@ -2,7 +2,9 @@
    Источник — mockups/*.css; только переменные из tokens.css. */
 /* Общий каркас макетов: кнопки, поля, модалка, артборд (по мотивам Mockups/_shared.css FS-LMS 2.0) */
 * { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; overflow: hidden; }   /* страница целиком не прокручивается — только внутренние области */
 body { font: var(--fs-14)/1.5 var(--font); color: var(--gray9); background: var(--gray0); }
+[hidden] { display: none !important; }
 button, input { font: inherit; }
 button { cursor: pointer; }
 .ic { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
@@ -45,6 +47,8 @@ button { cursor: pointer; }
 .badge { white-space: nowrap; }
 .btn[disabled] { background: var(--gray1); border-color: var(--gray2); color: var(--gray5); cursor: not-allowed; }
 .btn-d { background: var(--red-d); border-color: var(--red-d); color: var(--white); font-weight: 600; }
+.btn-d:hover { background: var(--red-d); }
+.badge .ic { margin-right: var(--sp-6); }
 .btn-s { padding: var(--sp-6) var(--sp-12); }
 .modal.wide { width: 480px; }
 .mo-warn { display: flex; gap: var(--sp-12); align-items: flex-start; }
@@ -186,6 +190,10 @@ button { cursor: pointer; }
 
 /* правки: класс .inl из base.css — поле формы, здесь — окошко внутри строки */
 .pz .inl { display: inline-flex; flex-direction: row; gap: 2px; white-space: nowrap; }
+/* настоящие элементы управления внутри окошка: вид задаёт .inl */
+.inl select, .inl input { border: 0; padding: 0; background: transparent; font: inherit; color: inherit; line-height: inherit; appearance: none; outline: none; }
+.inl select { cursor: pointer; }
+.inl:focus-within { outline: 2px solid var(--blue); outline-offset: 1px; }
 .select b { white-space: nowrap; }
 .cell .demo .pz { min-width: 0; } .cell .demo { min-width: 0; }
 

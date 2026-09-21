@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Конструктор кода по блокам</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- значки и штриховка неверного блока -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" style="fill:var(--red-l)"/>
+      <line x1="0" y1="0" x2="0" y2="8" style="stroke:var(--red);stroke-opacity:.5;stroke-width:3"/>
+    </pattern>
+  </defs>
+  <symbol id="i-align" viewBox="0 0 24 24"><path d="M4 6h16M9 12h11M13 18h7M4 10l3 2-3 2"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></symbol>
+  <symbol id="i-approx" viewBox="0 0 24 24"><path d="M5 9c2-2.5 4-2.5 7 0s5 2.5 7 0M5 15c2-2.5 4-2.5 7 0s5 2.5 7 0"/></symbol>
+  <symbol id="i-arrow-l" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-r" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+</svg>
+
+<!-- ═══ стартовый экран (mockups/01-start.html) ═══ -->
+<div class="screen start" id="scr-start" hidden>
+  <header class="head">
+    <img class="logo" src="assets/logo.svg" alt="Шаг в будущее">
+    <button class="btn" type="button" id="start-admin"><svg class="ic"><use href="#i-key"/></svg>Администрирование</button>
+  </header>
+  <div class="scroll"><main class="main">
+    <h1>Мастер-классы</h1>
+    <div class="grid" id="start-grid"></div>
+  </main></div>
+</div>
+
+<!-- ═══ экран ученика (mockups/03-student.html) ═══ -->
+<div class="screen stu" id="scr-student" hidden>
+  <header class="head">
+    <div class="hl">
+      <a class="home" href="#" id="stu-home" title="К списку мастер-классов" aria-label="К списку мастер-классов"><img class="logo" src="assets/logo.svg" alt="Шаг в будущее"></a>
+      <span class="sep"></span>
+      <h1 id="stu-title"></h1>
+    </div>
+    <div class="hr">
+      <button class="select" type="button" id="stu-stage"><span><small id="stu-stage-n"></small><b id="stu-stage-t"></b></span><svg class="ic"><use href="#i-down"/></svg></button>
+      <button class="btn btn-hint" type="button" id="stu-hint"><svg class="ic"><use href="#i-bulb"/></svg>Подсказка</button>
+      <button class="btn" type="button" id="stu-reset"><svg class="ic"><use href="#i-home"/></svg>В начало</button>
+    </div>
+  </header>
+  <div class="bar" id="stu-bar"></div>
+  <div class="cols">
+    <section class="pnl">
+      <div class="pnl-h">Твоя программа</div>
+      <div class="pnl-b"><div class="stack" id="stu-work"></div></div>
+      <div class="pnl-f"><span id="stu-foot">Заполни все слоты, чтобы проверить</span><button class="btn btn-p btn-lg" type="button" id="stu-check" disabled>Проверить</button></div>
+    </section>
+    <section class="pnl">
+      <div class="pnl-h">Блоки<span class="count">осталось блоков: <b id="stu-count"></b></span></div>
+      <div class="pnl-b"><div class="pal" id="stu-pal"></div></div>
+    </section>
+  </div>
+</div>
+
+<!-- ═══ экран администратора (mockups/02-admin.html) ═══ -->
+<div class="screen adm mode-frags" id="scr-admin" hidden>
+  <header class="head">
+    <div class="hl">
+      <img class="logo" src="assets/logo.svg" alt="Шаг в будущее">
+      <span class="sep"></span>
+      <div><div class="crumbs">Администрирование</div><h1 id="adm-title"></h1></div>
+    </div>
+    <div class="hr">
+      <span class="badge b-warn" id="adm-status"><svg class="ic"><use href="#i-warn"/></svg>Есть несохранённые изменения</span>
+      <button class="btn" type="button" id="adm-view" disabled title="Сначала сохраните изменения"><svg class="ic"><use href="#i-eye"/></svg>Посмотреть как ученик</button>
+      <button class="btn btn-p" type="button" id="adm-save"><svg class="ic"><use href="#i-save"/></svg>Сохранить</button>
+      <button class="btn" type="button" id="adm-exit">Выйти</button>
+    </div>
+  </header>
+
+  <div class="body">
+    <div class="main"><div class="col">
+
+      <section class="panel">
+        <div class="panel-b panel-top">
+          <div class="row2">
+            <div class="fld"><label for="adm-name">Название мастер-класса</label><div class="in"><input type="text" id="adm-name"></div></div>
+            <div class="fld"><label for="adm-lang">Язык</label><select id="adm-lang"><option value="" disabled>Выберите</option><option value="arduino">Arduino</option><option value="python">Python</option></select></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel sec-stages">
+        <div class="panel-h"><div><h2>Этапы</h2><p>Каждый этап — отдельный код. Ученик выбирает этап в списке в шапке.</p></div><span class="cnt" id="adm-stage-cnt"></span></div>
+        <div class="panel-b">
+          <div class="stabs" id="adm-stabs"></div>
+          <div class="stage-edit">
+            <div class="fld"><label for="adm-stage-name">Название этапа</label><div class="in"><input type="text" id="adm-stage-name"></div></div>
+            <button class="btn btn-dl" type="button" id="adm-stage-del"><svg class="ic"><use href="#i-trash"/></svg>Удалить этап</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel sec-frags">
+        <div class="panel-h"><div><h2>Фрагменты</h2><p>Вставьте код кусками. Порядок фрагментов между собой неизменен.</p></div><span class="cnt" id="adm-frag-cnt"></span></div>
+        <div class="panel-b">
+          <div class="frags" id="adm-frags"></div>
+          <button class="add" type="button" id="adm-frag-add"><svg class="ic"><use href="#i-plus"/></svg>Фрагмент</button>
+        </div>
+        <div class="parse-row">
+          <span>Когда фрагменты вставлены, разберите код на шаги. К фрагментам можно вернуться.</span>
+          <button class="btn btn-p" type="button" id="adm-parse">Разобрать на шаги<svg class="ic"><use href="#i-arrow-r"/></svg></button>
+        </div>
+      </section>
+
+      <section class="panel sec-steps">
+        <div class="panel-h"><div><h2>Шаги</h2><p id="adm-steps-sub"></p></div>
+          <div class="steps-tools"><span class="badge b-warn" id="adm-steps-miss" hidden></span><button class="btn btn-s" type="button" id="adm-back"><svg class="ic"><use href="#i-arrow-l"/></svg>К фрагментам</button></div></div>
+        <div class="steps" id="adm-steps"></div>
+        <div class="steps-foot">Закрывающие строки («}») появляются сами и шагов не имеют.</div>
+      </section>
+
+    </div></div>
+
+    <aside class="tree">
+      <div class="tree-h"><b>Мастер-классы</b><button class="collapse-btn" type="button" id="adm-collapse" aria-label="Свернуть список"><svg class="ic"><use href="#i-chev-r"/></svg></button></div>
+      <div class="tree-l" id="adm-list"></div>
+      <div class="tree-f"><button class="btn" type="button" id="adm-new"><svg class="ic"><use href="#i-plus"/></svg><span class="lbl">Мастер-класс</span></button></div>
+    </aside>
+  </div>
+</div>
+
+<!-- порядок подключения менять нельзя: workshops → core → state → ui → admin → app -->
+<script src="workshops/mk3.js"></script>
+
+<script src="js/core/split.js"></script>
+<script src="js/core/fields.js"></script>
+<script src="js/core/similarity.js"></script>
+<script src="js/core/validate.js"></script>
+<script src="js/core/serialize.js"></script>
+
+<script src="js/state.js"></script>
+
+<script src="js/ui/render.js"></script>
+<script src="js/ui/drag.js"></script>
+<script src="js/ui/modal.js"></script>
+
+<script src="js/admin/editor.js"></script>
+<script src="js/admin/steps.js"></script>
+<script src="js/admin/save.js"></script>
+
+<script src="js/app.js"></script>
+</body>
+</html>

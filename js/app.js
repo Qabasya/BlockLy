@@ -27,59 +27,20 @@ MKB.app = MKB.app || {};
     });
   }
 
-  // ─── экран ученика ───
-  // Сборка — MKB.state, рисует MKB.ui.renderBoard. Любое изменение сборки
-  // сбрасывает результат проверки: подсветка ошибок относится к старой сборке.
-  var student = { st: null, view: { result: null, hint: null } };
-
-  function openStudent(w, si) {
-    student.st = MKB.state.create(w, si);
-    student.view = { result: null, hint: null };
-    MKB.ui.renderBoard(student.st, student.view);
-  }
-
-  function changed(ok) {
-    if (ok) {
-      student.view.result = null;
-      MKB.ui.renderBoard(student.st, student.view);
-    }
-    return ok;
-  }
-
-  // Действия со сборкой; путь слота — массив индексов: [6] или [6, 0].
-  // Их же вызывают перетаскивание и клавиатура (этап 6).
-  MKB.app.student = {
-    get state() { return student.st; },
-    place: function (id, path) { return changed(MKB.state.place(student.st, id, path)); },
-    remove: function (path) { return changed(MKB.state.remove(student.st, path).length > 0); },
-    move: function (from, to) { return changed(MKB.state.move(student.st, from, to)); },
-    render: function () { MKB.ui.renderBoard(student.st, student.view); }
-  };
-
-  // Значения полей живут в состоянии: иначе пропадут при перерисовке
-  function onFieldInput(e) {
-    var f = e.target.dataset && e.target.dataset.field;
-    if (!f || !student.st) return;
-    student.st.values[f] = e.target.value;
-    // перерисовка на каждый символ сбила бы фокус — только когда ввод закончен
-    if (student.view.result && e.type === 'change') changed(true);
-  }
-
   function boot() {
     renderStart();
     // временно до этапа 7: экран выбирается адресом — index.html#student, #admin
     var w = MKB.workshops[0];
-    if (location.hash === '#student' && w) { openStudent(w, 0); show('student'); }
+    if (location.hash === '#student' && w) { MKB.ui.student.open(w, 0); show('student'); }
     else if (location.hash === '#admin' && w) { MKB.admin.render(w, 0, w.stages[0].fragments.length - 1); show('admin'); }
     else show('start');
 
     window.addEventListener('resize', function () { ui.shapeAll(document); });
-    $('scr-student').addEventListener('change', onFieldInput);
-    $('scr-student').addEventListener('input', onFieldInput);
+    MKB.ui.student.init();
   }
 
   MKB.app.show = show;
   MKB.app.renderStart = renderStart;
-  MKB.app.openStudent = openStudent;
+  MKB.app.student = MKB.ui.student;     // для проверки из консоли: MKB.app.student.place('b8', [6])
   document.addEventListener('DOMContentLoaded', boot);
 })();

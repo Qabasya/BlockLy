@@ -144,6 +144,7 @@ MKB.ui = MKB.ui || {};
     opts = opts || {};
     var e = el('div', 'pz ty-' + blockType(b) + ' st-' + (opts.state || 'pal'));
     e.dataset.id = b.id;
+    e.tabIndex = 0;                     // клавиатура: Tab по блокам
     e.appendChild(el('i', 'stripe'));
     fillRow(e, b, opts);
     return e;
@@ -155,6 +156,7 @@ MKB.ui = MKB.ui || {};
     opts = opts || {};
     var e = el('div', 'pz cb ty-' + blockType(b) + ' st-' + (opts.state || 'slot'));
     e.dataset.id = b.id;
+    e.tabIndex = 0;
     e.appendChild(el('i', 'stripe'));
     var head = el('div', 'cb-h');
     fillRow(head, b, opts);

@@ -213,5 +213,20 @@ button { cursor: pointer; }
 .stepbox.warn { background: var(--orange-l); border-color: var(--orange-d); }
 .stepbox.okb { background: var(--green-l); border-color: var(--green-d); }
 
+/* ── перетаскивание и клавиатура ── */
+.pz[data-id] { cursor: grab; user-select: none; touch-action: none; }
+.pz[data-id]:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.pz.dragging { position: fixed; z-index: 40; pointer-events: none; margin: 0; }
+.pz.drag-src { opacity: .35; }
+.pnl.pal-drop { outline: 2px dashed var(--blue); outline-offset: -6px; }
+body.is-dragging, body.is-dragging * { cursor: grabbing !important; }
+.drop:not(.empty) svg.bg .f { fill: var(--blue-l); }
+
+/* модалка успеха (артборд 3е) */
+.modal.done { width: 520px; }
+.mo-f-ctr { justify-content: center; }
+.code-view { max-height: 50vh; overflow: auto; }
+.copy-buf { position: fixed; left: -9999px; top: 0; opacity: 0; }
+
 /* «Проверить» подсвечивается как подсказка, когда подсказывать нечего */
 .glow { box-shadow: 0 0 0 1.5px var(--green-d), var(--glow); }

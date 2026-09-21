@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Тесты ядра</title>
+<link rel="stylesheet" href="css/tokens.css">
+<style>
+  body { margin: 0; padding: var(--sp-24); font: var(--fs-14)/1.5 var(--font); color: var(--gray9); background: var(--gray0); }
+  h1 { margin: 0 0 var(--sp-16); font-size: var(--fs-22); font-weight: 600; }
+  .sum { margin-bottom: var(--sp-16); padding: var(--sp-8) var(--sp-16); border-radius: var(--r-8); font-weight: 600; }
+  .sum.t-ok { background: var(--green-l); color: var(--green-d); }
+  .sum.t-bad { background: var(--red-l); color: var(--red-d); }
+  .t { font-family: var(--font-mono); white-space: pre-wrap; }
+  .t.t-ok { color: var(--green-d); }
+  .t.t-bad { color: var(--red-d); font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Тесты ядра</h1>
+<div id="out"></div>
+
+<!-- данные и ядро: тот же порядок, что в index.html -->
+<script src="workshops/mk3.js"></script>
+<script src="js/core/split.js"></script>
+<script src="js/core/fields.js"></script>
+<script src="js/core/similarity.js"></script>
+<script src="js/core/validate.js"></script>
+<script src="js/core/serialize.js"></script>
+
+<!-- тесты -->
+<script src="tests/runner.js"></script>
+<script src="tests/data.test.js"></script>
+
+<script>MKB.runTests(document.getElementById('out'));</script>
+</body>
+</html>

@@ -1,2 +1,140 @@
-/* разбор на шаги, перенос описаний. Этап 8. */
+/* разбор на шаги, перенос описаний. Режим «Шаги» редактора (mockups/02-admin.html, 2б–2в, 2ж). */
 window.MKB = window.MKB || {};
+MKB.admin = MKB.admin || {};
+
+(function () {
+  var A = MKB.admin;
+  var FIELD_RE = /\{\{(.*?)\}\}/g;
+  function el() { return MKB.ui.el.apply(null, arguments); }
+  function $(id) { return document.getElementById(id); }
+  function stage() { return A.s.w.stages[A.s.si]; }
+  function blocks() { return MKB.splitFragments(stage().fragments, A.s.w.language); }
+
+  // «Разобрать на шаги →». Описания уже есть, а код изменился — сначала модалка.
+  function parse() {
+    var st = stage(), bs = blocks();
+    if (!bs.length) return;
+    if (MKB.stepsInSync(bs, st.steps)) return show();
+    if (!MKB.hasDescriptions(st.steps)) return apply(bs);
+
+    var sum = MKB.reparseSummary(bs, st.steps);
+    var list = el('ul', 'mo-list');
+    function li(before, n, after) {
+      var x = el('li');
+      x.appendChild(document.createTextNode(before));
+      x.appendChild(el('b', null, String(n)));
+      x.appendChild(document.createTextNode(after));
+      list.appendChild(x);
+    }
+    li('Описания сохранятся у ', sum.kept, ' ' + word(sum.kept, 'строки, которая', 'строк, которые', 'строк, которые') + ' не изменились.');
+    if (sum.lost) li('Описания ', sum.lost, ' ' + word(sum.lost, 'изменённой или удалённой строки', 'изменённых или удалённых строк', 'изменённых или удалённых строк') + ' пропадут.');
+    if (sum.fresh) li('', sum.fresh, ' ' + word(sum.fresh, 'новая строка будет', 'новые строки будут', 'новых строк будут') + ' без описания.');
+    MKB.ui.openModal({
+      cls: 'wide',
+      title: 'Разобрать код заново?',
+      body: [el('span', null, 'Код фрагментов изменился с прошлого разбора.'), list],
+      buttons: [
+        { label: 'Отмена', autofocus: true },
+        { label: 'Разобрать заново', cls: 'btn-p', action: function (close) { close(); apply(bs); } }
+      ]
+    });
+  }
+
+  function word(n, one, few, many) { return A.plural(n, one, few, many).replace(/^\d+ /, ''); }
+
+  function apply(bs) {
+    var st = stage();
+    var next = MKB.transferSteps(bs, st.steps);
+    if (JSON.stringify(next) !== JSON.stringify(st.steps)) { st.steps = next; A.changed(); }
+    show();
+  }
+
+  function show() {
+    A.s.mode = 'steps';
+    A.render();
+    $('scr-admin').querySelector('.main').scrollTop = 0;
+  }
+
+  // Код строки: поля — плашками «White | Red | Blue»
+  function codeEl(text) {
+    var span = el('span'), last = 0, m;
+    FIELD_RE.lastIndex = 0;
+    while ((m = FIELD_RE.exec(text))) {
+      span.appendChild(document.createTextNode(text.slice(last, m.index)));
+      span.appendChild(el('span', 'chip-f', m[1].split('|').join(' | ')));
+      last = m.index + m[0].length;
+    }
+    span.appendChild(document.createTextNode(text.slice(last)));
+    return span;
+  }
+
+  function missEl() {
+    var m = el('span', 'miss-t');
+    m.appendChild(MKB.ui.icon('warn'));
+    m.appendChild(document.createTextNode('Нет описания — ученик увидит пустой шаг'));
+    return m;
+  }
+
+  function stepEl(b, step, i) {
+    var row = el('div', 'step');
+    row.style.setProperty('--d', b.depth);
+    row.appendChild(el('div', 'sn', 'Шаг ' + (i + 1)));
+    var sb = el('div', 'sb');
+    var code = el('div', 'code');
+    code.appendChild(codeEl(b.text));
+    code.appendChild(el('span', 'ft', 'фрагмент ' + b.group));
+    sb.appendChild(code);
+    var input = el('input');
+    input.type = 'text';
+    input.value = step.text || '';
+    input.placeholder = 'Что должен сделать ученик на этом шаге?';
+    input.dataset.step = i;
+    input.setAttribute('aria-label', 'Описание шага ' + (i + 1));
+    sb.appendChild(input);
+    var miss = missEl();
+    sb.appendChild(miss);
+    row.appendChild(sb);
+    markMiss(input);
+    return row;
+  }
+
+  function markMiss(input) {
+    var empty = !input.value.trim();
+    input.classList.toggle('miss', empty);
+    input.nextSibling.hidden = !empty;
+  }
+
+  function renderMissCount() {
+    var n = stage().steps.filter(function (s) { return !(s.text || '').trim(); }).length;
+    var b = $('adm-steps-miss');
+    b.hidden = !n;
+    b.textContent = A.plural(n, 'шаг', 'шага', 'шагов') + ' без описания';
+  }
+
+  function render() {
+    var st = stage(), bs = blocks();
+    $('adm-steps-sub').textContent = 'Код разобран на ' + A.plural(bs.length, 'строку-блок', 'строки-блока', 'строк-блоков') +
+      '. Каждая строка — один шаг; описание увидит ученик, когда дойдёт до неё.';
+    var list = $('adm-steps');
+    list.replaceChildren.apply(list, bs.map(function (b, i) { return stepEl(b, st.steps[i] || { text: '' }, i); }));
+    renderMissCount();
+  }
+
+  function onInput(e) {
+    var t = e.target;
+    if (!t.matches('#adm-steps input')) return;
+    var st = stage(), i = +t.dataset.step;
+    st.steps[i].text = t.value;
+    markMiss(t);
+    renderMissCount();
+    A.changed();
+  }
+
+  function init() {
+    $('adm-parse').addEventListener('click', parse);
+    $('adm-back').addEventListener('click', function () { A.s.mode = 'frags'; A.render(); });
+    $('adm-steps').addEventListener('input', onInput);
+  }
+
+  MKB.admin.steps = { init: init, render: render, parse: parse };
+})();

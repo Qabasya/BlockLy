@@ -74,6 +74,51 @@ window.MKB = window.MKB || {};
       '});\n';
   }
 
+  // ─── id нового мастер-класса = имя файла workshops/<id>.js ───
+  var TR = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i',
+    й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u',
+    ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya' };
+
+  // «МК-5: Светофор» → "mk-5-svetofor"; занятые id получают -2, -3, …
+  function makeId(title, taken) {
+    var base = String(title || '').toLowerCase().split('').map(function (c) {
+      return c in TR ? TR[c] : c;
+    }).join('').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40).replace(/-+$/, '') || 'mk';
+    var id = base, n = 2;
+    while ((taken || []).indexOf(id) >= 0) id = base + '-' + n++;
+    return id;
+  }
+
+  // ─── строка подключения в index.html ───
+  function scriptTag(id) { return '<script src="workshops/' + id + '.js"></script>'; }
+  var WS_LINE = /^[ \t]*<script src="workshops\/[^"]+"><\/script>[ \t]*\r?\n/gm;
+
+  // Дописать подключение нового мастер-класса после последнего из workshops/*.js.
+  // Остальной текст файла не трогается; уже подключён — файл как есть.
+  function addScriptTag(html, id) {
+    if (html.indexOf(scriptTag(id)) >= 0) return html;
+    var last = null, m;
+    WS_LINE.lastIndex = 0;
+    while ((m = WS_LINE.exec(html))) last = m;
+    var line = scriptTag(id) + '\n';
+    if (last) {
+      var at = last.index + last[0].length;
+      return html.slice(0, at) + line + html.slice(at);
+    }
+    var core = html.indexOf('<script src="js/core/');
+    var at2 = core >= 0 ? core : html.lastIndexOf('</body>');
+    return html.slice(0, at2) + line + '\n' + html.slice(at2);
+  }
+
+  // Убрать строку подключения удалённого мастер-класса
+  function removeScriptTag(html, id) {
+    var re = new RegExp('^[ \\t]*' + scriptTag(id).replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '[ \\t]*\\r?\\n', 'm');
+    return html.replace(re, '');
+  }
+
+  MKB.addScriptTag = addScriptTag;
+  MKB.removeScriptTag = removeScriptTag;
+  MKB.makeId = makeId;
   MKB.buildCode = buildCode;
   MKB.workshopToJs = workshopToJs;
 })();

@@ -1,10 +1,14 @@
-/* редактор мастер-класса, этапов и фрагментов. Разметка и классы — из mockups/02-admin.html. */
+/* редактор мастер-класса и этапов; фрагменты — fragments.js. Разметка — mockups/02-admin.html.
+   Правит черновик MKB.admin.s.w; о каждой правке сообщает MKB.admin.changed(). */
 window.MKB = window.MKB || {};
 MKB.admin = MKB.admin || {};
 
 (function () {
-  var el = function () { return MKB.ui.el.apply(null, arguments); };
-  var icon = function (n) { return MKB.ui.icon(n); };
+  var A = MKB.admin;
+  function ui() { return MKB.ui; }
+  function el() { return MKB.ui.el.apply(null, arguments); }
+  function icon(n) { return MKB.ui.icon(n); }
+  function $(id) { return document.getElementById(id); }
 
   // «1 строка», «2 строки», «5 строк»
   function plural(n, one, few, many) {
@@ -13,131 +17,114 @@ MKB.admin = MKB.admin || {};
     return n + ' ' + w;
   }
 
-  // Короткий код для свёрнутого сайдбара: «МК-3: …» → «МК3»
-  function shortCode(w) {
-    var head = String(w.title || '').split(':')[0].replace(/[\s-]/g, '');
-    return head.slice(0, 4) || '—';
-  }
+  function stage() { return A.s.w.stages[A.s.si]; }
 
-  function codeLines(code) {
-    return String(code || '').split('\n').filter(function (l) { return l.trim(); });
-  }
-
-  function iconBtn(cls, name, label, disabled) {
-    var b = el('button', cls);
-    b.type = 'button';
-    b.setAttribute('aria-label', label);
-    b.disabled = !!disabled;
-    b.appendChild(icon(name));
-    return b;
-  }
-
-  // Сводка под кодом фрагмента: блоки, хвосты, шаг отступа, поля
-  function fragmentMeta(frag, language) {
-    var bs = MKB.splitFragments([frag], language);
-    var tails = bs.filter(function (b) { return b.closer !== null; }).length;
-    var fields = [];
-    bs.forEach(function (b) { fields = fields.concat(b.fields); });
-    var parts = ['Блоков: ' + bs.length, 'хвост: ' + tails,
-      'шаг отступа: ' + MKB.detectIndentStep([frag], language)];
-    var f = 'полей ввода: ' + fields.length;
-    if (fields.length === 1 && fields[0].options.length) {
-      f += ' (список из ' + fields[0].options.length + ' значений)';
-    }
-    parts.push(f);
-    return parts.join(' · ');
-  }
-
-  // Карточка фрагмента: свёрнутая — превью первой строки и счётчик
-  function fragmentEl(frag, i, count, open, language) {
-    var card = el('div', 'frag' + (open ? ' open' : ''));
-    var h = el('div', 'frag-h');
-    h.appendChild(el('span', 'frag-n', String(i + 1)));
-    var lines = codeLines(frag.code);
-    if (open) {
-      h.appendChild(el('span', 'ttl', 'Фрагмент ' + (i + 1)));
-    } else {
-      h.appendChild(el('span', 'frag-prev', lines[0] ? lines[0].trim() : ''));
-      if (frag.free) h.appendChild(el('span', 'badge b-info', 'строки меняются'));
-    }
-    h.appendChild(el('span', 'cnt', plural(lines.length, 'строка', 'строки', 'строк')));
-    h.appendChild(iconBtn('ib', 'up', 'Выше', i === 0));
-    h.appendChild(iconBtn('ib', 'down', 'Ниже', i === count - 1));
-    h.appendChild(iconBtn('ib del', 'trash', 'Удалить фрагмент'));
-    h.appendChild(iconBtn('ib', open ? 'up' : 'down', open ? 'Свернуть' : 'Развернуть'));
-    card.appendChild(h);
-    if (!open) return card;
-
-    var body = el('div', 'frag-b');
-    var ta = el('textarea', 'code');
-    ta.spellcheck = false;
-    ta.value = frag.code || '';
-    body.appendChild(ta);
-    var tools = el('div', 'tools');
-    var sw = el('span', 'switch' + (frag.free ? ' on' : ''));
-    sw.appendChild(el('span', 'track'));
-    sw.appendChild(el('b', null, frag.free ? 'Включено' : 'Выключено'));
-    sw.appendChild(el('span', null, 'Строки можно менять местами'));
-    tools.appendChild(sw);
-    var align = el('button', 'btn btn-s');
-    align.type = 'button';
-    align.appendChild(icon('align'));
-    align.appendChild(document.createTextNode('Выровнять отступы'));
-    tools.appendChild(align);
-    body.appendChild(tools);
-    body.appendChild(el('p', 'meta', fragmentMeta(frag, language)));
-    card.appendChild(body);
-    return card;
-  }
-
-  function stageTab(stage, i, on) {
-    var b = el('button', 'stab' + (on ? ' on' : ''));
-    b.type = 'button';
-    b.appendChild(el('span', 'sq2', String(i + 1)));
-    b.appendChild(document.createTextNode(stage.title || 'Без названия'));
-    return b;
-  }
-
-  function sidebarItem(w, on) {
-    var row = el('div', 'mk' + (on ? ' on' : ''));
-    row.appendChild(el('span', 'sq', shortCode(w)));
-    row.appendChild(el('span', 't', w.title || 'Новый мастер-класс'));
-    row.appendChild(iconBtn('del', 'trash', 'Удалить мастер-класс'));
-    return row;
-  }
-
-  // Заполнить экран админки мастер-классом w, этапом si; openFrag — индекс развёрнутого фрагмента
-  function render(w, si, openFrag) {
-    var $ = function (id) { return document.getElementById(id); };
-    var stage = w.stages[si];
-    $('adm-title').textContent = w.title || 'Новый мастер-класс';
-    $('adm-name').value = w.title || '';
-    $('adm-lang').value = w.language || '';
-
+  function renderStages() {
+    var w = A.s.w;
     $('adm-stage-cnt').textContent = plural(w.stages.length, 'этап', 'этапа', 'этапов');
     var tabs = $('adm-stabs');
     tabs.replaceChildren();
-    w.stages.forEach(function (s, i) { tabs.appendChild(stageTab(s, i, i === si)); });
+    w.stages.forEach(function (s, i) {
+      var b = el('button', 'stab' + (i === A.s.si ? ' on' : ''));
+      b.type = 'button';
+      b.dataset.i = i;
+      b.appendChild(el('span', 'sq2', String(i + 1)));
+      b.appendChild(el('span', 'stab-t', s.title || 'Новый этап'));
+      tabs.appendChild(b);
+    });
     var plus = el('button', 'stab plus');
     plus.type = 'button';
+    plus.dataset.act = 'add-stage';
     plus.appendChild(icon('plus'));
     plus.appendChild(document.createTextNode('Этап'));
     tabs.appendChild(plus);
-    $('adm-stage-name').value = stage.title || '';
-    $('adm-stage-del').disabled = w.stages.length < 2;
+    $('adm-stage-name').value = stage().title || '';
+    var del = $('adm-stage-del');
+    del.disabled = w.stages.length < 2;
+    del.title = del.disabled ? 'Нельзя удалить единственный этап' : '';
+  }
 
-    $('adm-frag-cnt').textContent = plural(stage.fragments.length, 'фрагмент', 'фрагмента', 'фрагментов');
-    var list = $('adm-frags');
-    list.replaceChildren();
-    stage.fragments.forEach(function (f, i) {
-      list.appendChild(fragmentEl(f, i, stage.fragments.length, i === openFrag, w.language));
+  // Весь центр редактора
+  function render() {
+    var w = A.s.w;
+    $('adm-name').value = w.title || '';
+    $('adm-lang').value = w.language || '';
+    renderStages();
+    A.frags.render();
+  }
+
+  // ─── правки ───
+  function selectStage(i) {
+    A.s.si = i;
+    A.s.mode = 'frags';
+    A.frags.setOpenFor(stage());
+    A.render();
+  }
+
+  function addStage() {
+    var w = A.s.w;
+    var n = w.stages.length + 1, id = 'stage' + n;
+    while (w.stages.some(function (s) { return s.id === id; })) id = 'stage' + ++n;
+    w.stages.push({ id: id, title: '', fragments: [{ free: false, code: '' }], steps: [] });
+    selectStage(w.stages.length - 1);
+    A.changed();
+    $('adm-stage-name').focus();
+  }
+
+  function deleteStage() {
+    var st = stage(), w = A.s.w;
+    if (w.stages.length < 2) return;
+    var nSteps = MKB.splitFragments(st.fragments, w.language).length;
+    ui().openModal({
+      cls: 'wide',
+      title: 'Удалить этап?',
+      body: [ui().warnText('Этап «' + (st.title || 'Новый этап') + '» будет удалён вместе с ' +
+        plural(st.fragments.length, 'фрагментом', 'фрагментами', 'фрагментами') + ' и описаниями ' +
+        plural(nSteps, 'шага', 'шагов', 'шагов') + '. Изменения вступят в силу после сохранения.')],
+      buttons: [
+        { label: 'Отмена', autofocus: true },
+        { label: 'Удалить этап', cls: 'btn-d', icon: 'trash', action: function (close) {
+          close();
+          w.stages.splice(A.s.si, 1);
+          selectStage(Math.max(0, A.s.si - 1));
+          A.changed();
+        } }
+      ]
     });
+  }
 
-    var side = $('adm-list');
-    side.replaceChildren();
-    MKB.workshops.forEach(function (x) { side.appendChild(sidebarItem(x, x === w)); });
+  function onClick(e) {
+    var t = e.target.closest('button');
+    if (!t || !$('scr-admin').contains(t)) return;
+    var card = t.closest('.frag');
+    var act = t.dataset.act;
+    if (t.classList.contains('stab') && !act) return selectStage(+t.dataset.i);
+    if (act === 'add-stage') return addStage();
+    if (t.id === 'adm-stage-del') return deleteStage();
+    if (t.id === 'adm-frag-add' || card) return A.frags.onClick(t, card);
+  }
+
+  // Текст правится на месте, без перерисовки поля — иначе сбился бы курсор
+  function onInput(e) {
+    var t = e.target, w = A.s.w;
+    if (t.id === 'adm-name') { w.title = t.value; A.changed(); return; }
+    if (t.id === 'adm-lang') { w.language = t.value; A.frags.render(); A.changed(); return; }
+    if (t.id === 'adm-stage-name') {
+      stage().title = t.value;
+      var tab = document.querySelector('#adm-stabs .stab.on .stab-t');
+      if (tab) tab.textContent = t.value || 'Новый этап';
+      A.changed();
+      return;
+    }
+    if (t.matches('#adm-frags textarea')) A.frags.onInput(t);
+  }
+
+  function init() {
+    var root = $('scr-admin');
+    root.addEventListener('click', onClick);
+    root.addEventListener('input', onInput);        // у select тоже приходит input
   }
 
   MKB.admin.plural = plural;
-  MKB.admin.render = render;
+  MKB.admin.editor = { init: init, render: render, setOpenFor: function (st) { A.frags.setOpenFor(st); }, stage: stage };
 })();

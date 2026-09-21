@@ -34,7 +34,8 @@
 .frag-b { padding: var(--sp-12); border-top: 1px solid var(--gray2); display: flex; flex-direction: column; gap: var(--sp-12); }
 textarea.code { width: 100%; min-height: 110px; padding: var(--sp-12); background: var(--gray0); border: 1px solid var(--gray3); border-radius: var(--r-8); font-family: var(--font-mono); font-size: var(--fs-14); line-height: 1.5; resize: vertical; tab-size: 2; white-space: pre; color: var(--gray9); }
 .tools { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
-.switch { display: inline-flex; align-items: center; gap: var(--sp-8); cursor: pointer; }
+.switch { display: inline-flex; align-items: center; gap: var(--sp-8); cursor: pointer; border: 0; background: none; padding: 0; font: inherit; color: inherit; border-radius: var(--r-6); }
+.switch:focus-visible, .mk:focus-visible, .stab:focus-visible, .ib:focus-visible, .add:focus-visible, .collapse-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .track { width: 36px; height: 20px; border-radius: var(--r-pill); background: var(--gray5); position: relative; flex: none; }
 .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--white); }
 .switch.on .track { background: var(--blue); }

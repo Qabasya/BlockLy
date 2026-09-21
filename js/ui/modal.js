@@ -9,8 +9,8 @@ MKB.ui = MKB.ui || {};
 
   // opts: { title, cls: 'wide' | 'wide done', head: узел над заголовком,
   //   center: заголовок по центру, body: [узлы], footCls, buttons: [{ label, cls, icon,
-  //   action(close), autofocus }], onClose }
-  // Esc и клик по затемнению — то же, что последняя кнопка («Отмена» / «Закрыть»).
+  //   action(close, btn), autofocus }], focus: узел для фокуса, onClose }
+  // Кнопка без action просто закрывает. Esc и клик по затемнению — закрыть без действия.
   function open(opts) {
     close();
     var scrim = ui.el('div', 'scrim');
@@ -27,8 +27,8 @@ MKB.ui = MKB.ui || {};
     box.appendChild(b);
 
     var foot = ui.el('div', 'mo-f' + (opts.footCls ? ' ' + opts.footCls : ''));
-    var focusBtn = null, cancel = null;
-    (opts.buttons || []).forEach(function (bt, i, all) {
+    var focusBtn = null;
+    (opts.buttons || []).forEach(function (bt) {
       var btn = ui.el('button', 'btn' + (bt.cls ? ' ' + bt.cls : ''));
       btn.type = 'button';
       if (bt.icon) btn.appendChild(ui.icon(bt.icon));
@@ -36,7 +36,6 @@ MKB.ui = MKB.ui || {};
       btn.addEventListener('click', function () { (bt.action || finish)(finish, btn); });
       foot.appendChild(btn);
       if (!focusBtn || bt.autofocus) focusBtn = btn;
-      if (i === all.length - 1) cancel = function () { (bt.action || finish)(finish, btn); };
     });
     box.appendChild(foot);
     scrim.appendChild(box);
@@ -51,17 +50,17 @@ MKB.ui = MKB.ui || {};
       if (back && back.isConnected) back.focus();
     }
     function onKey(e) {
-      if (e.key === 'Escape') { e.preventDefault(); (cancel || finish)(); }
+      if (e.key === 'Escape') { e.preventDefault(); finish(); }
       if (e.key === 'Tab') trapFocus(e, box);
     }
-    scrim.addEventListener('pointerdown', function (e) { if (e.target === scrim) (cancel || finish)(); });
+    scrim.addEventListener('pointerdown', function (e) { if (e.target === scrim) finish(); });
     document.addEventListener('keydown', onKey, true);
 
     var root = document.querySelector('.screen:not([hidden])') || document.body;
     root.appendChild(scrim);
     var state = { close: finish, el: box };
     current = state;
-    if (focusBtn) focusBtn.focus();
+    (opts.focus || focusBtn || box).focus();
     return state;
   }
 

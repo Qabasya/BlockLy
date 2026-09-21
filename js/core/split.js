@@ -126,6 +126,31 @@ window.MKB = window.MKB || {};
     blocks.forEach(function (b) { b.free = b.free && b.depth === minDepth[b.group]; });
   }
 
+  // «Выровнять отступы» во фрагменте: табы → пробелы, пробелы в конце строк
+  // убраны, глубина — по тем же правилам, что при разборе (отступ / шаг, не
+  // глубже чем на уровень), отступ — unit пробелов на уровень. Пустые строки
+  // остаются пустыми.
+  function alignIndent(code, unit) {
+    var lines = String(code || '').split(/\r?\n/).map(function (l) {
+      return expandTabs(l).replace(/\s+$/, '');
+    });
+    var step = 0;
+    lines.some(function (l) {
+      var ind = l.length - l.trimStart().length;
+      if (l && ind > 0) { step = ind; return true; }
+      return false;
+    });
+    step = step || unit;
+    var prev = -1;
+    return lines.map(function (l) {
+      if (!l) return '';
+      var d = Math.min(Math.round((l.length - l.trimStart().length) / step), prev + 1);
+      prev = d;
+      return ' '.repeat(unit * d) + l.trim();
+    }).join('\n');
+  }
+
+  MKB.alignIndent = alignIndent;
   MKB.expandTabs = expandTabs;
   MKB.stripComment = stripComment;
   MKB.detectIndentStep = detectIndentStep;

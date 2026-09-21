@@ -31,6 +31,13 @@ button { cursor: pointer; }
 .fld input { width: 100%; border: 1px solid var(--gray3); background: var(--white); border-radius: var(--r-8); padding: var(--sp-8) var(--sp-12); font-size: var(--fs-14); color: var(--gray9); }
 .fld .in .ic { position: absolute; right: var(--sp-12); top: 50%; transform: translateY(-50%); color: var(--gray6); }
 .fld .err { display: flex; gap: var(--sp-6); align-items: center; font-size: var(--fs-12); color: var(--red); }
+.fld input.bad { border-color: var(--red); }
+/* пароль: «глаз» — кнопка показать/скрыть */
+.fld .in.has-eye input { padding-right: var(--sp-40); }
+.fld .in .eye { position: absolute; right: var(--sp-6); top: 50%; transform: translateY(-50%); display: grid; place-items: center; padding: var(--sp-4); border: 0; border-radius: var(--r-6); background: none; color: var(--gray6); }
+.fld .in .eye:hover { background: var(--gray1); }
+.fld .in .eye:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.fld .in .eye .ic { position: static; transform: none; }
 
 /* модалка (§1.7): r-14, заголовок 16/600 */
 .scrim { position: fixed; inset: 0; background: var(--scrim); display: grid; place-items: center; z-index: 50; }
@@ -73,7 +80,8 @@ button { cursor: pointer; }
 .hl { display: flex; align-items: center; gap: var(--sp-16); min-width: 0; }
 .hl .logo { height: 32px; }
 .sep { width: 1px; height: 32px; background: var(--gray2); flex: none; }
-.head h1 { font-size: var(--fs-16); font-weight: 600; line-height: 1.2; }
+.head h1 { font-size: var(--fs-16); font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hl > div { min-width: 0; }   /* длинное название — многоточие, а не перенос */
 .crumbs { font-size: var(--fs-12); color: var(--gray6); }
 .btn-lg { padding: var(--sp-12) var(--sp-24); font-size: var(--fs-16); }
 .btn-hint { border-color: var(--green-d); color: var(--green-d); background: var(--green-l); font-weight: 600; }
@@ -168,6 +176,11 @@ button { cursor: pointer; }
 .cursor { position: absolute; z-index: 25; width: 22px; height: 22px; filter: drop-shadow(var(--sh-pal)); }
 .menu { position: absolute; z-index: 30; width: 300px; background: var(--white); border: 1px solid var(--gray3); border-radius: var(--r-8); box-shadow: var(--sh-menu); padding: var(--sp-4); }
 .mi { display: flex; align-items: center; gap: var(--sp-12); padding: var(--sp-8) var(--sp-12); border-radius: var(--r-6); }
+.stu .menu { position: fixed; }
+.menu .mi { width: 100%; border: 0; background: none; font: inherit; color: inherit; text-align: left; }
+.menu .mi:hover { background: var(--gray1); }
+.menu .mi.cur { background: var(--blue-l); }
+.menu .mi:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
 .mi.cur { background: var(--blue-l); font-weight: 600; }
 .mi small { margin-left: auto; color: var(--gray6); font-weight: 400; }
 .dot { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; flex: none; border: 2px solid var(--gray5); }

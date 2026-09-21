@@ -152,6 +152,15 @@ MKB.ui = MKB.ui || {};
     root.addEventListener('change', onField);
     $('stu-hint').addEventListener('click', hint);
     $('stu-check').addEventListener('click', check);
+    // Ширина колонки меняется и без resize окна (появилась полоса прокрутки) —
+    // контуры пазлов рисуются по ширине, их надо пересчитать
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(function (list) {
+        list.forEach(function (en) { ui.shapeAll(en.target); });
+      });
+      ro.observe($('stu-work'));
+      ro.observe($('stu-pal'));
+    }
   }
 
   MKB.ui.student = {

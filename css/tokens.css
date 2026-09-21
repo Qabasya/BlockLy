@@ -9,6 +9,8 @@
   --yellow-l: #fff9db;
   /* open-color (ключевой тон .6): точки фрагментов и цвет полей ввода */
   --yellow: #fab005; --pink: #e64980; --cyan: #15aabf;
+  /* бейджи языка: Arduino — фирменный бирюзовый Arduino, Python — зелёные токены */
+  --arduino: #00979d; --arduino-l: #e0f4f4;
   --gray0: #f8f9fa; --gray1: #f1f3f5; --gray2: #e9ecef; --gray3: #dee2e6;
   --gray5: #adb5bd; --gray6: #868e96; --gray7: #495057; --gray9: #212529;
 

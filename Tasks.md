@@ -56,7 +56,7 @@
 - `//` и `#` в конце строки удалены, `//` внутри кавычек сохранён.
 - Этап МК-3 разбирается в 11 блоков с правильными `bodyCount` и `closer`.
 
-## 2. `core/fields.js`, `core/validate.js`, `core/serialize.js`
+## 2. `core/fields.js`, `core/validate.js`, `core/serialize.js` — ✅ готово
 
 **Что делаем**
 - `fields.js`: разбор `{{a|b|c}}` → `fields` (первое — ответ, `options`),

@@ -100,7 +100,7 @@ window.MKB = window.MKB || {};
     });
 
     markFree(blocks);
-    if (MKB.applyFields) blocks.forEach(MKB.applyFields);
+    if (MKB.applyFields) MKB.applyFields(blocks);   // norm и поля — fields.js
     return blocks;
   }
 

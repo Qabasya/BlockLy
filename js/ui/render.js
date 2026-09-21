@@ -49,10 +49,19 @@ MKB.ui = MKB.ui || {};
     if (pos < text.length) parent.appendChild(document.createTextNode(text.slice(pos)));
   }
 
+  // Статус поля после проверки: класс окошка, значок, подпись у блока
+  var FIELD_ST = {
+    ok: ['good', 'check'],
+    case: ['case', 'approx', 'проверь заглавные'],
+    wrong: ['bad', 'x', 'поле неверно'],
+    empty: ['bad', 'x', 'заполни поле']
+  };
+
   // Поле ввода внутри строки: список (▾) или свободный ввод.
   // Ширина — по длине эталона + 2, иначе поле выдаёт длину ответа.
-  function fieldEl(field, value) {
-    var box = el('span', 'inl');
+  function fieldEl(field, value, status) {
+    var fs = FIELD_ST[status];
+    var box = el('span', 'inl' + (fs ? ' ' + fs[0] : ''));
     var width = MKB.fieldWidth(field) + 'ch';
     var ctl;
     if (field.options.length) {
@@ -70,7 +79,8 @@ MKB.ui = MKB.ui || {};
     ctl.dataset.field = field.id;
     ctl.setAttribute('aria-label', 'Поле ввода');
     box.appendChild(ctl);
-    if (field.options.length) box.appendChild(icon('down'));
+    if (fs) box.appendChild(icon(fs[1]));
+    else if (field.options.length) box.appendChild(icon('down'));
     return box;
   }
 
@@ -82,21 +92,85 @@ MKB.ui = MKB.ui || {};
     while ((m = FIELD_RE.exec(b.text))) {
       appendMarked(code, b.text.slice(last, m.index), last, opts.diffs);
       var f = b.fields[i++];
-      code.appendChild(fieldEl(f, opts.values && opts.values[f.id]));
+      code.appendChild(fieldEl(f, opts.values && opts.values[f.id], opts.fields && opts.fields[f.id]));
       last = m.index + m[0].length;
     }
     appendMarked(code, b.text.slice(last), last, opts.diffs);
     return code;
   }
 
-  // Блок-строка. opts: { state: 'pal' | 'slot' | …, diffs, values }
+  // Статус блока: никогда только цветом — контур, значок и подпись
+  var TAGS = { ok: ['check', 'верно'], near: ['approx', 'почти'], wrong: ['x', 'не здесь'] };
+
+  // Хвостик строки справа: подпись статуса или лампочка подсказки.
+  // Поле неверно при верном месте — подпись берётся у поля.
+  function tailEl(b, opts) {
+    var t = TAGS[opts.state];
+    if (t) {
+      var ic = t[0], label = t[1], cls = 'tag';
+      if (opts.state === 'ok' && opts.fields) {
+        b.fields.some(function (f) {
+          var fs = FIELD_ST[opts.fields[f.id]];
+          if (fs && fs[2]) { ic = fs[1]; label = fs[2]; cls += ' f-' + fs[0]; return true; }
+          return false;
+        });
+      }
+      var tag = el('span', cls);
+      tag.appendChild(icon(ic));
+      tag.appendChild(document.createTextNode(label));
+      return tag;
+    }
+    if (opts.state === 'hint') {
+      var hi = el('span', 'hi');
+      hi.appendChild(icon('bulb'));
+      return hi;
+    }
+    return null;
+  }
+
+  function isOpener(b) { return b.bodyCount > 0 || b.closer !== null; }
+
+  // Строка: кружок фрагмента, код, хвостик статуса
+  function fillRow(row, b, opts) {
+    row.appendChild(el('i', 'fdot ' + fragClass(b.group)));
+    row.appendChild(codeEl(b, opts));
+    var tail = tailEl(b, opts);
+    if (tail) row.appendChild(tail);
+  }
+
+  // Блок-строка. opts: { state: 'pal' | 'slot' | 'ok' | 'near' | 'wrong' | 'hint',
+  //   diffs, values, fields: { F0: 'ok' | 'case' | … } }
   function blockEl(b, opts) {
     opts = opts || {};
     var e = el('div', 'pz ty-' + blockType(b) + ' st-' + (opts.state || 'pal'));
     e.dataset.id = b.id;
     e.appendChild(el('i', 'stripe'));
-    e.appendChild(el('i', 'fdot ' + fragClass(b.group)));
-    e.appendChild(codeEl(b, opts));
+    fillRow(e, b, opts);
+    return e;
+  }
+
+  // Открывающий блок в слоте — буква «С»: строка, тело (kids) и перекладина с
+  // хвостом под замком. У Python хвоста нет — перекладина пустая.
+  function openerEl(b, opts, kids) {
+    opts = opts || {};
+    var e = el('div', 'pz cb ty-' + blockType(b) + ' st-' + (opts.state || 'slot'));
+    e.dataset.id = b.id;
+    e.appendChild(el('i', 'stripe'));
+    var head = el('div', 'cb-h');
+    fillRow(head, b, opts);
+    e.appendChild(head);
+    var mouth = el('div', 'mouth');
+    (kids || []).forEach(function (k) { mouth.appendChild(k); });
+    e.appendChild(mouth);
+    var bar = el('div', 'cb-t');
+    if (b.closer !== null) {
+      var tl = el('span', 'tl');
+      tl.appendChild(icon('lock'));
+      tl.appendChild(document.createTextNode(b.closer));
+      tl.title = 'Закрывающая строка ставится сама';
+      bar.appendChild(tl);
+    }
+    e.appendChild(bar);
     return e;
   }
 
@@ -149,7 +223,9 @@ MKB.ui = MKB.ui || {};
   MKB.ui.el = el;
   MKB.ui.icon = icon;
   MKB.ui.blockType = blockType;
+  MKB.ui.isOpener = isOpener;
   MKB.ui.blockEl = blockEl;
+  MKB.ui.openerEl = openerEl;
   MKB.ui.emptyEl = emptyEl;
   MKB.ui.shape = shape;
   MKB.ui.shapeAll = shapeAll;

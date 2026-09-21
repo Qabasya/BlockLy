@@ -151,8 +151,12 @@ button { cursor: pointer; }
 .tag { display: inline-flex; align-items: center; gap: var(--sp-4); padding: 1px var(--sp-8); border-radius: var(--r-pill); background: var(--white); border: 1.5px solid currentColor; font: 600 var(--fs-12) var(--font); position: relative; z-index: 1; white-space: nowrap; }
 .tag .ic { width: 12px; height: 12px; stroke-width: 3; }
 .st-ok .tag { color: var(--green-d); } .st-near .tag { color: var(--orange-d); } .st-wrong .tag { color: var(--red-d); }
+.st-ok .tag.f-bad { color: var(--red-d); } .st-ok .tag.f-case { color: var(--orange-d); }   /* место верно, поле — нет */
 .hi { color: var(--green-d); display: grid; position: relative; z-index: 1; }
 .hi .ic { width: 18px; height: 18px; }
+
+/* отличие строк-близнецов: подсвечено и подчёркнуто — в блоке и в его двойнике */
+.pz mark { background: var(--yellow); color: inherit; border-radius: var(--r-4); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 
 /* поля ввода внутри строки */
 .inl { display: inline-flex; align-items: center; gap: 2px; padding: 0 var(--sp-6); background: var(--white); border: 1.5px solid var(--gray5); border-radius: var(--r-6); font: inherit; line-height: 22px; vertical-align: middle; }

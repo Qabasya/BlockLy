@@ -27,46 +27,59 @@ MKB.app = MKB.app || {};
     });
   }
 
-  // ─── экран ученика: начальное состояние этапа ───
-  // Слоты — только верхнего уровня, палитра — все блоки. Перемешивание,
-  // установка и дерево слотов — state.js (этап 5).
-  function renderStudent(w, si) {
-    var stage = w.stages[si];
-    var blocks = MKB.splitFragments(stage.fragments, w.language);
-    var diffs = MKB.findSimilar(blocks).diffs;
+  // ─── экран ученика ───
+  // Сборка — MKB.state, рисует MKB.ui.renderBoard. Любое изменение сборки
+  // сбрасывает результат проверки: подсветка ошибок относится к старой сборке.
+  var student = { st: null, view: { result: null, hint: null } };
 
-    $('stu-title').textContent = w.title;
-    $('stu-stage-n').textContent = 'Этап ' + (si + 1) + ' из ' + w.stages.length;
-    $('stu-stage-t').textContent = stage.title;
+  function openStudent(w, si) {
+    student.st = MKB.state.create(w, si);
+    student.view = { result: null, hint: null };
+    MKB.ui.renderBoard(student.st, student.view);
+  }
 
-    var box = ui.el('div', 'stepbox');
-    box.appendChild(ui.el('span', 'stepno', 'Шаг 1 из ' + blocks.length));
-    box.appendChild(ui.el('span', 'steptx', stage.steps[0] ? stage.steps[0].text : ''));
-    $('stu-bar').replaceChildren(box);
+  function changed(ok) {
+    if (ok) {
+      student.view.result = null;
+      MKB.ui.renderBoard(student.st, student.view);
+    }
+    return ok;
+  }
 
-    var work = $('stu-work');
-    work.replaceChildren();
-    blocks.forEach(function (b) { if (b.depth === 0) work.appendChild(ui.emptyEl()); });
+  // Действия со сборкой; путь слота — массив индексов: [6] или [6, 0].
+  // Их же вызывают перетаскивание и клавиатура (этап 6).
+  MKB.app.student = {
+    get state() { return student.st; },
+    place: function (id, path) { return changed(MKB.state.place(student.st, id, path)); },
+    remove: function (path) { return changed(MKB.state.remove(student.st, path).length > 0); },
+    move: function (from, to) { return changed(MKB.state.move(student.st, from, to)); },
+    render: function () { MKB.ui.renderBoard(student.st, student.view); }
+  };
 
-    var pal = $('stu-pal');
-    pal.replaceChildren();
-    blocks.forEach(function (b) { pal.appendChild(ui.blockEl(b, { state: 'pal', diffs: diffs[b.id] })); });
-    $('stu-count').textContent = blocks.length;
+  // Значения полей живут в состоянии: иначе пропадут при перерисовке
+  function onFieldInput(e) {
+    var f = e.target.dataset && e.target.dataset.field;
+    if (!f || !student.st) return;
+    student.st.values[f] = e.target.value;
+    // перерисовка на каждый символ сбила бы фокус — только когда ввод закончен
+    if (student.view.result && e.type === 'change') changed(true);
   }
 
   function boot() {
     renderStart();
     // временно до этапа 7: экран выбирается адресом — index.html#student, #admin
     var w = MKB.workshops[0];
-    if (location.hash === '#student' && w) { renderStudent(w, 0); show('student'); }
+    if (location.hash === '#student' && w) { openStudent(w, 0); show('student'); }
     else if (location.hash === '#admin' && w) { MKB.admin.render(w, 0, w.stages[0].fragments.length - 1); show('admin'); }
     else show('start');
 
     window.addEventListener('resize', function () { ui.shapeAll(document); });
+    $('scr-student').addEventListener('change', onFieldInput);
+    $('scr-student').addEventListener('input', onFieldInput);
   }
 
   MKB.app.show = show;
   MKB.app.renderStart = renderStart;
-  MKB.app.renderStudent = renderStudent;
+  MKB.app.openStudent = openStudent;
   document.addEventListener('DOMContentLoaded', boot);
 })();

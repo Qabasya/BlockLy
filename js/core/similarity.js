@@ -30,7 +30,7 @@ window.MKB = window.MKB || {};
     return len ? 1 - levenshtein(a, b) / len : 1;
   }
 
-  function isWord(ch) { return !!ch && /\w/.test(ch); }
+  function isWord(ch) { return !!ch && /[\p{L}\p{N}_]/u.test(ch); }
 
   // Различающийся кусок двух строк по общему префиксу и суффиксу:
   // → [[start, end] в a, [start, end] в b].

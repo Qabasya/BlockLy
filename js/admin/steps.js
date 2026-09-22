@@ -4,15 +4,12 @@ MKB.admin = MKB.admin || {};
 
 (function () {
   var A = MKB.admin;
-  var FIELD_RE = /\{\{(.*?)\}\}/g;
-  function el() { return MKB.ui.el.apply(null, arguments); }
-  function $(id) { return document.getElementById(id); }
-  function stage() { return A.s.w.stages[A.s.si]; }
-  function blocks() { return MKB.splitFragments(stage().fragments, A.s.w.language); }
+  var ui = MKB.ui, el = ui.el, icon = ui.icon, $ = ui.$;
+  function blocks() { return MKB.splitFragments(A.stage().fragments, A.s.w.language); }
 
   // «Разобрать на шаги →». Описания уже есть, а код изменился — сначала модалка.
   function parse() {
-    var st = stage(), bs = blocks();
+    var st = A.stage(), bs = blocks();
     if (!bs.length) return;
     if (MKB.stepsInSync(bs, st.steps)) return show();
     if (!MKB.hasDescriptions(st.steps)) return apply(bs);
@@ -29,7 +26,7 @@ MKB.admin = MKB.admin || {};
     li('Описания сохранятся у ', sum.kept, ' ' + word(sum.kept, 'строки, которая', 'строк, которые', 'строк, которые') + ' не изменились.');
     if (sum.lost) li('Описания ', sum.lost, ' ' + word(sum.lost, 'изменённой или удалённой строки', 'изменённых или удалённых строк', 'изменённых или удалённых строк') + ' пропадут.');
     if (sum.fresh) li('', sum.fresh, ' ' + word(sum.fresh, 'новая строка будет', 'новые строки будут', 'новых строк будут') + ' без описания.');
-    MKB.ui.openModal({
+    ui.openModal({
       cls: 'wide',
       title: 'Разобрать код заново?',
       body: [el('span', null, 'Код фрагментов изменился с прошлого разбора.'), list],
@@ -40,10 +37,10 @@ MKB.admin = MKB.admin || {};
     });
   }
 
-  function word(n, one, few, many) { return A.plural(n, one, few, many).replace(/^\d+ /, ''); }
+  function word(n, one, few, many) { return A.pluralWord(n, one, few, many); }
 
   function apply(bs) {
-    var st = stage();
+    var st = A.stage();
     var next = MKB.transferSteps(bs, st.steps);
     if (JSON.stringify(next) !== JSON.stringify(st.steps)) { st.steps = next; A.changed(); }
     show();
@@ -57,20 +54,18 @@ MKB.admin = MKB.admin || {};
 
   // Код строки: поля — плашками «White | Red | Blue»
   function codeEl(text) {
-    var span = el('span'), last = 0, m;
-    FIELD_RE.lastIndex = 0;
-    while ((m = FIELD_RE.exec(text))) {
-      span.appendChild(document.createTextNode(text.slice(last, m.index)));
-      span.appendChild(el('span', 'chip-f', m[1].split('|').join(' | ')));
-      last = m.index + m[0].length;
-    }
-    span.appendChild(document.createTextNode(text.slice(last)));
+    var span = el('span');
+    MKB.eachPart(text, function (chunk) {
+      span.appendChild(document.createTextNode(chunk));
+    }, function (i, inner) {
+      span.appendChild(el('span', 'chip-f', inner.split('|').join(' | ')));
+    });
     return span;
   }
 
   function missEl() {
     var m = el('span', 'miss-t');
-    m.appendChild(MKB.ui.icon('warn'));
+    m.appendChild(icon('warn'));
     m.appendChild(document.createTextNode('Нет описания — ученик увидит пустой шаг'));
     return m;
   }
@@ -105,14 +100,14 @@ MKB.admin = MKB.admin || {};
   }
 
   function renderMissCount() {
-    var n = stage().steps.filter(function (s) { return !(s.text || '').trim(); }).length;
+    var n = A.stage().steps.filter(function (s) { return !(s.text || '').trim(); }).length;
     var b = $('adm-steps-miss');
     b.hidden = !n;
     b.textContent = A.plural(n, 'шаг', 'шага', 'шагов') + ' без описания';
   }
 
   function render() {
-    var st = stage(), bs = blocks();
+    var st = A.stage(), bs = blocks();
     $('adm-steps-sub').textContent = 'Код разобран на ' + A.plural(bs.length, 'строку-блок', 'строки-блока', 'строк-блоков') +
       '. Каждая строка — один шаг; описание увидит ученик, когда дойдёт до неё.';
     var list = $('adm-steps');
@@ -123,7 +118,7 @@ MKB.admin = MKB.admin || {};
   function onInput(e) {
     var t = e.target;
     if (!t.matches('#adm-steps input')) return;
-    var st = stage(), i = +t.dataset.step;
+    var st = A.stage(), i = +t.dataset.step;
     st.steps[i].text = t.value;
     markMiss(t);
     renderMissCount();

@@ -6,13 +6,15 @@ MKB.admin = MKB.admin || {};
 
 (function () {
   var A = MKB.admin;
-  var ui = function () { return MKB.ui; };
-  function $(id) { return document.getElementById(id); }
+  var ui = MKB.ui, el = ui.el, icon = ui.icon, $ = ui.$;
   function copy(x) { return JSON.parse(JSON.stringify(x)); }
 
   // s.w — черновик, s.saved — JSON сохранённой версии (null у нового), s.si — этап,
   // s.mode — 'frags' | 'steps', s.open — развёрнутые фрагменты, s.folder — 'granted' | 'prompt' | 'none'
   A.s = { w: null, saved: null, si: 0, mode: 'frags', open: {}, folder: 'none' };
+
+  // Открытый этап черновика; зовут все части редактора
+  function stage() { return A.s.w.stages[A.s.si]; }
 
   function isDirty() { return A.s.saved === null || JSON.stringify(A.s.w) !== A.s.saved; }
   function canWrite() { return A.s.folder === 'granted' || !MKB.save.supported(); }
@@ -31,14 +33,14 @@ MKB.admin = MKB.admin || {};
   function select() {
     A.s.si = 0;
     A.s.mode = 'frags';
-    A.editor.setOpenFor(A.s.w.stages[0]);
+    A.frags.setOpenFor(stage());
     render();
     $('scr-admin').querySelector('.main').scrollTop = 0;
   }
 
   // ─── отрисовка ───
   function render() {
-    var root = $('scr-admin'), st = A.s.w.stages[A.s.si];
+    var root = $('scr-admin'), st = stage();
     if (A.s.mode === 'steps' && !MKB.stepsInSync(MKB.splitFragments(st.fragments, A.s.w.language), st.steps)) A.s.mode = 'frags';
     root.classList.toggle('mode-frags', A.s.mode === 'frags');
     root.classList.toggle('mode-steps', A.s.mode === 'steps');
@@ -54,7 +56,7 @@ MKB.admin = MKB.admin || {};
     $('adm-title').textContent = w.title || 'Новый мастер-класс';
     var st = $('adm-status');
     st.className = 'badge ' + (dirty ? 'b-warn' : 'b-ok');
-    st.replaceChildren(ui().icon(dirty ? 'warn' : 'check'), document.createTextNode(dirty ? 'Есть несохранённые изменения' : 'Сохранено'));
+    st.replaceChildren(icon(dirty ? 'warn' : 'check'), document.createTextNode(dirty ? 'Есть несохранённые изменения' : 'Сохранено'));
     $('adm-connect').hidden = canWrite();
     $('adm-save').disabled = !canWrite() || !dirty;
     var view = $('adm-view');
@@ -69,16 +71,16 @@ MKB.admin = MKB.admin || {};
   }
 
   function listRow(w, on) {
-    var row = ui().el('div', 'mk' + (on ? ' on' : ''));
+    var row = el('div', 'mk' + (on ? ' on' : ''));
     row.dataset.id = w.id;
     row.tabIndex = 0;
     row.title = w.title || 'Новый мастер-класс';
-    row.appendChild(ui().el('span', 'sq', shortCode(w.title)));
-    row.appendChild(ui().el('span', 't', w.title || 'Новый мастер-класс'));
-    var del = ui().el('button', 'del');
+    row.appendChild(el('span', 'sq', shortCode(w.title)));
+    row.appendChild(el('span', 't', w.title || 'Новый мастер-класс'));
+    var del = el('button', 'del');
     del.type = 'button';
     del.setAttribute('aria-label', 'Удалить мастер-класс');
-    del.appendChild(ui().icon('trash'));
+    del.appendChild(icon('trash'));
     row.appendChild(del);
     return row;
   }
@@ -93,10 +95,10 @@ MKB.admin = MKB.admin || {};
   // ─── уход с несохранёнными изменениями ───
   function leave(action) {
     if (!isDirty()) return action();
-    ui().openModal({
+    ui.openModal({
       cls: 'wide',
       title: 'Выйти без сохранения?',
-      body: [ui().warnText('Изменения в «' + (A.s.w.title || 'Новый мастер-класс') + '» не сохранены и пропадут.')],
+      body: [ui.warnText('Изменения в «' + (A.s.w.title || 'Новый мастер-класс') + '» не сохранены и пропадут.')],
       buttons: [
         { label: 'Остаться', autofocus: true },
         { label: 'Не сохранять', cls: 'btn-d', action: function (close) { close(); action(); } }
@@ -105,7 +107,7 @@ MKB.admin = MKB.admin || {};
   }
 
   function message(title, text) {
-    ui().openModal({ cls: 'wide', title: title, body: [ui().el('div', null, text)], buttons: [{ label: 'Понятно', cls: 'btn-p' }] });
+    ui.openModal({ cls: 'wide', title: title, body: [el('div', null, text)], buttons: [{ label: 'Понятно', cls: 'btn-p' }] });
   }
 
   // ─── папка проекта ───
@@ -155,10 +157,10 @@ MKB.admin = MKB.admin || {};
     if (!w) return;
     var nFr = 0, nSt = 0;
     w.stages.forEach(function (s) { nFr += s.fragments.length; nSt += s.steps.length; });
-    ui().openModal({
+    ui.openModal({
       cls: 'wide',
       title: 'Удалить мастер-класс?',
-      body: [ui().warnText('«' + (w.title || 'Новый мастер-класс') + '» будет удалён вместе с ' +
+      body: [ui.warnText('«' + (w.title || 'Новый мастер-класс') + '» будет удалён вместе с ' +
         A.plural(nFr, 'фрагментом', 'фрагментами', 'фрагментами') + ' и описаниями ' +
         A.plural(nSt, 'шага', 'шагов', 'шагов') + '. Это действие нельзя отменить.')],
       buttons: [
@@ -212,6 +214,7 @@ MKB.admin = MKB.admin || {};
     $('adm-exit').addEventListener('click', function () { leave(MKB.app.goStart); });
   }
 
+  A.stage = stage;
   A.init = init;
   A.enter = enter;
   A.render = render;

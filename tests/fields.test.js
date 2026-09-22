@@ -48,6 +48,11 @@ window.MKB = window.MKB || {};
     eq(MKB.checkValue('a  +  b', 'a+b'), 'ok');
   });
   t('Поле: пробел между словами значим', function () { eq(MKB.checkValue('intx', 'int x'), 'wrong'); });
+  t('Поле: пробел между русскими словами тоже значим', function () {
+    eq(MKB.checkValue('Приветмир', 'Привет мир'), 'wrong');
+    eq(MKB.checkValue('Привет  мир', 'Привет мир'), 'ok', 'лишние пробелы внутри');
+    eq(MKB.checkValue('привет мир', 'Привет мир'), 'case');
+  });
   t('Поле: пустое → empty', function () {
     eq(MKB.checkValue('', 'White'), 'empty');
     eq(MKB.checkValue('   ', 'White'), 'empty');
@@ -57,6 +62,10 @@ window.MKB = window.MKB || {};
 
   t('Ширина поля — длина эталона + 2', function () {
     eq(MKB.fieldWidth({ answer: 'White' }), 7);
+  });
+
+  t('Ширина списка — по самому длинному варианту, иначе он обрежется', function () {
+    eq(MKB.fieldWidth({ answer: 'Blue', options: ['Blue', 'Red', 'Magenta'] }), 9);
   });
 
   t('Подстановка введённых значений, не эталонных', function () {

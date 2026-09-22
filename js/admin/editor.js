@@ -5,19 +5,17 @@ MKB.admin = MKB.admin || {};
 
 (function () {
   var A = MKB.admin;
-  function ui() { return MKB.ui; }
-  function el() { return MKB.ui.el.apply(null, arguments); }
-  function icon(n) { return MKB.ui.icon(n); }
-  function $(id) { return document.getElementById(id); }
+  var ui = MKB.ui, el = ui.el, icon = ui.icon, $ = ui.$;
 
-  // «1 строка», «2 строки», «5 строк»
-  function plural(n, one, few, many) {
+  // Форма слова по числу: «строка», «строки», «строк»
+  function pluralWord(n, one, few, many) {
     var m10 = n % 10, m100 = n % 100;
-    var w = m10 === 1 && m100 !== 11 ? one : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many;
-    return n + ' ' + w;
+    return m10 === 1 && m100 !== 11 ? one
+      : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many;
   }
 
-  function stage() { return A.s.w.stages[A.s.si]; }
+  // «1 строка», «2 строки», «5 строк»
+  function plural(n, one, few, many) { return n + ' ' + pluralWord(n, one, few, many); }
 
   function renderStages() {
     var w = A.s.w;
@@ -38,7 +36,7 @@ MKB.admin = MKB.admin || {};
     plus.appendChild(icon('plus'));
     plus.appendChild(document.createTextNode('Этап'));
     tabs.appendChild(plus);
-    $('adm-stage-name').value = stage().title || '';
+    $('adm-stage-name').value = A.stage().title || '';
     var del = $('adm-stage-del');
     del.disabled = w.stages.length < 2;
     del.title = del.disabled ? 'Нельзя удалить единственный этап' : '';
@@ -57,7 +55,7 @@ MKB.admin = MKB.admin || {};
   function selectStage(i) {
     A.s.si = i;
     A.s.mode = 'frags';
-    A.frags.setOpenFor(stage());
+    A.frags.setOpenFor(A.stage());
     A.render();
   }
 
@@ -72,13 +70,13 @@ MKB.admin = MKB.admin || {};
   }
 
   function deleteStage() {
-    var st = stage(), w = A.s.w;
+    var st = A.stage(), w = A.s.w;
     if (w.stages.length < 2) return;
     var nSteps = MKB.splitFragments(st.fragments, w.language).length;
-    ui().openModal({
+    ui.openModal({
       cls: 'wide',
       title: 'Удалить этап?',
-      body: [ui().warnText('Этап «' + (st.title || 'Новый этап') + '» будет удалён вместе с ' +
+      body: [ui.warnText('Этап «' + (st.title || 'Новый этап') + '» будет удалён вместе с ' +
         plural(st.fragments.length, 'фрагментом', 'фрагментами', 'фрагментами') + ' и описаниями ' +
         plural(nSteps, 'шага', 'шагов', 'шагов') + '. Изменения вступят в силу после сохранения.')],
       buttons: [
@@ -110,7 +108,7 @@ MKB.admin = MKB.admin || {};
     if (t.id === 'adm-name') { w.title = t.value; A.changed(); return; }
     if (t.id === 'adm-lang') { w.language = t.value; A.frags.render(); A.changed(); return; }
     if (t.id === 'adm-stage-name') {
-      stage().title = t.value;
+      A.stage().title = t.value;
       var tab = document.querySelector('#adm-stabs .stab.on .stab-t');
       if (tab) tab.textContent = t.value || 'Новый этап';
       A.changed();
@@ -126,5 +124,6 @@ MKB.admin = MKB.admin || {};
   }
 
   MKB.admin.plural = plural;
-  MKB.admin.editor = { init: init, render: render, setOpenFor: function (st) { A.frags.setOpenFor(st); }, stage: stage };
+  MKB.admin.pluralWord = pluralWord;
+  MKB.admin.editor = { init: init, render: render };
 })();

@@ -1,11 +1,19 @@
-/* рекурсивная отрисовка слотов и пазлов. Разметка и классы — из mockups/03-student.html.
+/* рекурсивная отрисовка слотов и пазлов; здесь же общие мелочи слоя UI ($, el,
+   icon, pathOf) — их берут остальные ui/* и admin/*.
+   Разметка и классы — из mockups/03-student.html.
    Данные мастер-класса в DOM попадают только через textContent: в коде есть <, > и &. */
 window.MKB = window.MKB || {};
 MKB.ui = MKB.ui || {};
 
 (function () {
   var NS = 'http://www.w3.org/2000/svg';
-  var FIELD_RE = /\{\{(.*?)\}\}/g;
+
+  function $(id) { return document.getElementById(id); }
+
+  // Путь слота: data-path="5.1" → [5, 1]. В палитре пути нет — null
+  function pathOf(e) {
+    return e.dataset.path ? e.dataset.path.split('.').map(Number) : null;
+  }
 
   // Элемент с классом и текстом; текст — только textContent
   function el(tag, cls, text) {
@@ -58,16 +66,19 @@ MKB.ui = MKB.ui || {};
   };
 
   // Поле ввода внутри строки: список (▾) или свободный ввод.
-  // Ширина — по длине эталона + 2, иначе поле выдаёт длину ответа.
-  function fieldEl(field, value, status) {
+  // Ширина — MKB.fieldWidth: эталон не должен выдавать длину ответа.
+  // options — перемешанный порядок вариантов (MKB.state): в разметке первое
+  // значение правильное, показывать список в авторском порядке нельзя.
+  function fieldEl(field, value, status, options) {
     var fs = FIELD_ST[status];
     var box = el('span', 'inl' + (fs ? ' ' + fs[0] : ''));
     var width = MKB.fieldWidth(field) + 'ch';
+    var list = options || field.options;
     var ctl;
-    if (field.options.length) {
+    if (list.length) {
       ctl = el('select');
       ctl.appendChild(el('option', null, ''));
-      field.options.forEach(function (o) { ctl.appendChild(el('option', null, o)); });
+      list.forEach(function (o) { ctl.appendChild(el('option', null, o)); });
     } else {
       ctl = el('input');
       ctl.type = 'text';
@@ -80,22 +91,20 @@ MKB.ui = MKB.ui || {};
     ctl.setAttribute('aria-label', 'Поле ввода');
     box.appendChild(ctl);
     if (fs) box.appendChild(icon(fs[1]));
-    else if (field.options.length) box.appendChild(icon('down'));
+    else if (list.length) box.appendChild(icon('down'));
     return box;
   }
 
   // Текст строки: литералы с <mark>, поля — элементами управления
   function codeEl(b, opts) {
     var code = el('span', 'code');
-    var last = 0, i = 0, m;
-    FIELD_RE.lastIndex = 0;
-    while ((m = FIELD_RE.exec(b.text))) {
-      appendMarked(code, b.text.slice(last, m.index), last, opts.diffs);
-      var f = b.fields[i++];
-      code.appendChild(fieldEl(f, opts.values && opts.values[f.id], opts.fields && opts.fields[f.id]));
-      last = m.index + m[0].length;
-    }
-    appendMarked(code, b.text.slice(last), last, opts.diffs);
+    MKB.eachPart(b.text, function (chunk, at) {
+      appendMarked(code, chunk, at, opts.diffs);
+    }, function (i) {
+      var f = b.fields[i];
+      code.appendChild(fieldEl(f, opts.values && opts.values[f.id],
+        opts.fields && opts.fields[f.id], opts.options && opts.options[f.id]));
+    });
     return code;
   }
 
@@ -139,7 +148,7 @@ MKB.ui = MKB.ui || {};
   }
 
   // Блок-строка. opts: { state: 'pal' | 'slot' | 'ok' | 'near' | 'wrong' | 'hint',
-  //   diffs, values, fields: { F0: 'ok' | 'case' | … } }
+  //   diffs, values, options, fields: { F0: 'ok' | 'case' | … } }
   function blockEl(b, opts) {
     opts = opts || {};
     var e = el('div', 'pz ty-' + blockType(b) + ' st-' + (opts.state || 'pal'));
@@ -222,6 +231,8 @@ MKB.ui = MKB.ui || {};
     list.reverse().forEach(shape);
   }
 
+  MKB.ui.$ = $;
+  MKB.ui.pathOf = pathOf;
   MKB.ui.el = el;
   MKB.ui.icon = icon;
   MKB.ui.blockType = blockType;

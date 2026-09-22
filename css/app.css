@@ -9,18 +9,17 @@ button, input { font: inherit; }
 button { cursor: pointer; }
 .ic { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-
 /* шапка */
 .head { height: var(--head-h); background: var(--white); border-bottom: 1px solid var(--gray2); padding: 0 var(--sp-24); display: flex; align-items: center; justify-content: space-between; }
 .head .logo { height: 40px; display: block; }
 
 /* кнопки */
-.btn { display: inline-flex; align-items: center; gap: var(--sp-8); border: 1px solid var(--gray3); background: var(--white); padding: var(--sp-8) var(--sp-16); border-radius: var(--r-8); font-size: var(--fs-14); color: var(--gray7); }
+.btn { display: inline-flex; align-items: center; gap: var(--sp-8); border: 1px solid var(--gray3); background: var(--white); padding: var(--sp-8) var(--sp-16); border-radius: var(--r-8); font-size: var(--fs-14); color: var(--gray7); white-space: nowrap; }
 .btn:hover { background: var(--gray0); }
 .btn:focus-visible, .card:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .btn-p { background: var(--blue); border-color: var(--blue); color: var(--white); font-weight: 600; }
 .btn-p:hover { background: var(--blue-h); border-color: var(--blue-h); }
-.badge { display: inline-flex; align-items: center; padding: var(--sp-4) var(--sp-12); border-radius: var(--r-pill); font-size: var(--fs-12); font-weight: 600; background: var(--gray1); color: var(--gray7); }
+.badge { display: inline-flex; align-items: center; padding: var(--sp-4) var(--sp-12); border-radius: var(--r-pill); font-size: var(--fs-12); font-weight: 600; background: var(--gray1); color: var(--gray7); white-space: nowrap; }
 .badge.lang-arduino { background: var(--arduino-l); color: var(--arduino); }
 .badge.lang-python { background: var(--green-l); color: var(--green-d); }
 
@@ -50,8 +49,6 @@ button { cursor: pointer; }
 .b-warn { background: var(--orange-l); color: var(--orange-d); }
 .b-ok { background: var(--green-l); color: var(--green-d); }
 .b-info { background: var(--blue-l); color: var(--blue-d); }
-.btn { white-space: nowrap; }
-.badge { white-space: nowrap; }
 .btn[disabled] { background: var(--gray1); border-color: var(--gray2); color: var(--gray5); cursor: not-allowed; }
 .btn-d { background: var(--red-d); border-color: var(--red-d); color: var(--white); font-weight: 600; }
 .btn-d:hover { background: var(--red-d); }
@@ -70,12 +67,11 @@ button { cursor: pointer; }
 .start .main h1 { font-size: var(--fs-22); font-weight: 600; line-height: 1.2; }
 .start .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-16); margin-top: var(--sp-20); }
 .start .card { display: flex; flex-direction: column; gap: var(--sp-8); min-height: 112px; padding: var(--sp-16) var(--sp-20); background: var(--white); border: 1px solid var(--gray2); border-radius: var(--r-12); box-shadow: var(--sh); text-align: left; color: inherit; }
-.start .card:hover, .card.hover { border-color: var(--blue); }
+.start .card:hover { border-color: var(--blue); }
 .start .card h2 { font-size: var(--fs-16); font-weight: 600; line-height: 1.3; }
 .start .card .badge { align-self: flex-start; }
 
 /* ── экран ученика ── */
-/* Экран ученика. Только токены из tokens.css */
 .stu { height: 100vh; display: flex; flex-direction: column; }
 .hl { display: flex; align-items: center; gap: var(--sp-16); min-width: 0; }
 .hl .logo { height: 32px; }
@@ -90,11 +86,11 @@ button { cursor: pointer; }
 /* панель управления */
 .bar { display: flex; align-items: center; justify-content: center; height: 56px; padding: 0 var(--sp-16); background: var(--white); border-bottom: 1px solid var(--gray2); flex: none; }
 .hr { display: flex; align-items: center; gap: var(--sp-12); flex: none; }
-.head { justify-content: space-between; }
 .select { display: inline-flex; align-items: center; gap: var(--sp-12); border: 1px solid var(--gray3); background: var(--white); border-radius: var(--r-8); padding: var(--sp-6) var(--sp-12); color: var(--gray9); text-align: left; }
 .select small { display: block; font-size: var(--fs-12); color: var(--gray6); line-height: 1.2; }
-.select b { display: block; font-weight: 600; line-height: 1.2; }
-.stepbox { display: flex; align-items: center; justify-content: center; gap: var(--sp-12); padding: var(--sp-8) var(--sp-16); min-height: 44px; border: 1px solid var(--gray3); background: var(--gray0); border-radius: var(--r-12); }
+.select b { display: block; font-weight: 600; line-height: 1.2; white-space: nowrap; }
+/* описание шага — без плашки; плашка остаётся только у сообщений о результате */
+.stepbox { display: flex; align-items: center; justify-content: center; gap: var(--sp-12); padding: var(--sp-8) var(--sp-16); min-height: 44px; border: 1px solid transparent; background: none; border-radius: var(--r-12); }
 .stepbox.warn { background: var(--orange-l); border-color: var(--orange-d); color: var(--orange-d); }
 .stepbox.okb { background: var(--green-l); border-color: var(--green-d); color: var(--green-d); }
 .stepno { background: var(--blue); color: var(--white); border-radius: var(--r-pill); padding: var(--sp-4) var(--sp-12); font-size: var(--fs-12); font-weight: 600; white-space: nowrap; }
@@ -148,11 +144,9 @@ button { cursor: pointer; }
 .st-hint svg.ln path { stroke: var(--green-d); stroke-width: 1.5; }
 .st-lift { transform: rotate(-2deg) scale(1.03); }
 .st-lift svg.bg { filter: drop-shadow(var(--sh-lift)); }
-.st-drag { position: absolute; z-index: 20; width: 502px; }
-.empty svg.bg .f, .ghost svg.bg .f { display: none; }
-.empty svg.ln path, .ghost svg.ln path { stroke: var(--gray5); stroke-width: 1.5; stroke-dasharray: 5 4; }
-.empty .ph, .ghost .ph { position: relative; z-index: 1; font-family: var(--font); font-style: italic; font-size: var(--fs-14); color: var(--gray6); }
-.ghost { opacity: .6; }
+.empty svg.bg .f { display: none; }
+.empty svg.ln path { stroke: var(--gray5); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.empty .ph { position: relative; z-index: 1; font-family: var(--font); font-style: italic; font-size: var(--fs-14); color: var(--gray6); }
 .drop svg.bg .f { display: block; fill: var(--blue-l); }
 .drop svg.ln path { stroke: var(--blue); stroke-width: 2.5; stroke-dasharray: 6 4; }
 .drop .ph { color: var(--blue-d); font-style: normal; font-weight: 600; }
@@ -167,21 +161,23 @@ button { cursor: pointer; }
 .pz mark { background: var(--yellow); color: inherit; border-radius: var(--r-4); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 
 /* поля ввода внутри строки */
-.inl { display: inline-flex; align-items: center; gap: 2px; padding: 0 var(--sp-6); background: var(--white); border: 1.5px solid var(--gray5); border-radius: var(--r-6); font: inherit; line-height: 22px; vertical-align: middle; }
+.inl { display: inline-flex; align-items: center; gap: 2px; padding: 0 var(--sp-6); background: var(--white); border: 1.5px solid var(--gray5); border-radius: var(--r-6); font: inherit; line-height: 22px; vertical-align: middle; white-space: nowrap; }
 .inl .ic { width: 12px; height: 12px; stroke-width: 3; }
 .inl.good { border-color: var(--green-d); } .inl.good .ic { color: var(--green-d); }
 .inl.case { border: 1.5px dashed var(--orange-d); } .inl.case .ic { color: var(--orange-d); }
 .inl.bad { border: 2.5px solid var(--red-d); background: var(--red-l); } .inl.bad .ic { color: var(--red-d); }
+/* настоящие элементы управления внутри окошка: вид задаёт .inl */
+.inl select, .inl input { border: 0; padding: 0; background: transparent; font: inherit; color: inherit; line-height: inherit; appearance: none; outline: none; }
+.inl select { cursor: pointer; }
+.inl:focus-within { outline: 2px solid var(--blue); outline-offset: 1px; }
 
-.cursor { position: absolute; z-index: 25; width: 22px; height: 22px; filter: drop-shadow(var(--sh-pal)); }
 .menu { position: absolute; z-index: 30; width: 300px; background: var(--white); border: 1px solid var(--gray3); border-radius: var(--r-8); box-shadow: var(--sh-menu); padding: var(--sp-4); }
 .mi { display: flex; align-items: center; gap: var(--sp-12); padding: var(--sp-8) var(--sp-12); border-radius: var(--r-6); }
 .stu .menu { position: fixed; }
 .menu .mi { width: 100%; border: 0; background: none; font: inherit; color: inherit; text-align: left; }
 .menu .mi:hover { background: var(--gray1); }
-.menu .mi.cur { background: var(--blue-l); }
+.menu .mi.cur { background: var(--blue-l); font-weight: 600; }
 .menu .mi:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
-.mi.cur { background: var(--blue-l); font-weight: 600; }
 .mi small { margin-left: auto; color: var(--gray6); font-weight: 400; }
 .dot { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; flex: none; border: 2px solid var(--gray5); }
 .mi.cur .dot { border-color: var(--blue); }
@@ -189,42 +185,13 @@ button { cursor: pointer; }
 
 .okc { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--green-l); color: var(--green-d); border: 3px solid var(--green-d); margin: var(--sp-20) auto 0; }
 .okc .ic { width: 32px; height: 32px; stroke-width: 3; }
-.code-view { font-family: var(--font-mono); font-size: var(--fs-12); line-height: 1.5; background: var(--gray0); border: 1px solid var(--gray2); border-radius: var(--r-8); padding: var(--sp-12); white-space: pre; color: var(--gray9); text-align: left; }
+.code-view { font-family: var(--font-mono); font-size: var(--fs-12); line-height: 1.5; background: var(--gray0); border: 1px solid var(--gray2); border-radius: var(--r-8); padding: var(--sp-12); white-space: pre; color: var(--gray9); text-align: left; max-height: 50vh; overflow: auto; }
 .ctr { text-align: center; }
-
-/* образец состояний */
-.spec { padding: var(--sp-24); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-16); }
-.cell { background: var(--white); border: 1px solid var(--gray2); border-radius: var(--r-12); padding: var(--sp-16); display: flex; flex-direction: column; gap: var(--sp-8); box-shadow: var(--sh); }
-.cell.wide { grid-column: 1 / -1; }
-.cell h3 { font-size: var(--fs-14); font-weight: 600; }
-.cell .how { font-size: var(--fs-12); color: var(--gray7); line-height: 1.4; }
-.cell .demo { background: var(--gray0); border-radius: var(--r-8); padding: var(--sp-16); display: flex; flex-direction: column; gap: var(--sp-12); }
-.cell .demo.row { flex-direction: row; flex-wrap: wrap; align-items: center; }
-.gray { filter: grayscale(1); }
-.leg { display: flex; align-items: center; gap: var(--sp-8); font-size: var(--fs-14); }
-.leg i { width: 8px; height: 22px; border-radius: 8px 0 0 8px; flex: none; }
-.leg .fdot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 2px var(--white); flex: none; }
-
-/* правки: класс .inl из base.css — поле формы, здесь — окошко внутри строки */
-.pz .inl { display: inline-flex; flex-direction: row; gap: 2px; white-space: nowrap; }
-/* настоящие элементы управления внутри окошка: вид задаёт .inl */
-.inl select, .inl input { border: 0; padding: 0; background: transparent; font: inherit; color: inherit; line-height: inherit; appearance: none; outline: none; }
-.inl select { cursor: pointer; }
-.inl:focus-within { outline: 2px solid var(--blue); outline-offset: 1px; }
-.select b { white-space: nowrap; }
-.cell .demo .pz { min-width: 0; } .cell .demo { min-width: 0; }
-
-/* модалки поверх блоков (у пазлов z-index до 2) */
 
 /* логотип — ссылка на список мастер-классов */
 .home { display: block; border-radius: var(--r-8); padding: var(--sp-4); margin: calc(var(--sp-4) * -1); }
 .home:hover { background: var(--gray1); }
 .home:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
-
-/* описание шага — без плашки, по центру; плашка остаётся только у сообщений о результате */
-.stepbox { background: none; border: 1px solid transparent; }
-.stepbox.warn { background: var(--orange-l); border-color: var(--orange-d); }
-.stepbox.okb { background: var(--green-l); border-color: var(--green-d); }
 
 /* ── перетаскивание и клавиатура ── */
 .pz[data-id] { cursor: grab; user-select: none; touch-action: none; }
@@ -238,7 +205,6 @@ body.is-dragging, body.is-dragging * { cursor: grabbing !important; }
 /* модалка успеха (артборд 3е) */
 .modal.done { width: 520px; }
 .mo-f-ctr { justify-content: center; }
-.code-view { max-height: 50vh; overflow: auto; }
 .copy-buf { position: fixed; left: -9999px; top: 0; opacity: 0; }
 
 /* «Проверить» подсвечивается как подсказка, когда подсказывать нечего */

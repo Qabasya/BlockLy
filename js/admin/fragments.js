@@ -5,16 +5,12 @@ MKB.admin = MKB.admin || {};
 
 (function () {
   var A = MKB.admin;
-  function ui() { return MKB.ui; }
-  function el() { return MKB.ui.el.apply(null, arguments); }
-  function icon(n) { return MKB.ui.icon(n); }
-  function $(id) { return document.getElementById(id); }
-  function plural() { return A.plural.apply(null, arguments); }
+  var ui = MKB.ui, el = ui.el, icon = ui.icon, $ = ui.$;
+  var plural = A.plural;
 
   function codeLines(code) {
     return String(code || '').split('\n').filter(function (l) { return l.trim(); });
   }
-  function stage() { return A.s.w.stages[A.s.si]; }
   function hasCode(st) { return st.fragments.some(function (f) { return codeLines(f.code).length; }); }
 
   function btnIcon(cls, name, label, act, disabled) {
@@ -93,7 +89,7 @@ MKB.admin = MKB.admin || {};
   }
 
   function renderFragments() {
-    var st = stage(), list = $('adm-frags');
+    var st = A.stage(), list = $('adm-frags');
     $('adm-frag-cnt').textContent = plural(st.fragments.length, 'фрагмент', 'фрагмента', 'фрагментов');
     list.replaceChildren.apply(list, st.fragments.map(function (f, i) {
       return fragmentEl(f, i, st.fragments.length, !!A.s.open[i]);
@@ -102,7 +98,7 @@ MKB.admin = MKB.admin || {};
   }
 
   function renderParseRow() {
-    var ok = hasCode(stage());
+    var ok = hasCode(A.stage());
     $('adm-parse').disabled = !ok;
     $('adm-parse-tx').textContent = ok
       ? 'Когда фрагменты вставлены, разберите код на шаги. К фрагментам можно вернуться.'
@@ -116,7 +112,7 @@ MKB.admin = MKB.admin || {};
   }
 
   function deleteFragment(i) {
-    var st = stage(), f = st.fragments[i];
+    var st = A.stage(), f = st.fragments[i];
     var lines = MKB.splitFragments([f], A.s.w.language).map(function (b) { return b.text; });
     var gone = st.steps.filter(function (s) { return s.text && lines.indexOf(s.line) >= 0; });
     var text = 'Фрагмент из ' + plural(codeLines(f.code).length, 'строки', 'строк', 'строк') + ' будет удалён';
@@ -124,17 +120,23 @@ MKB.admin = MKB.admin || {};
       text += ', вместе с ним пропадут описания ' + plural(gone.length, 'шага', 'шагов', 'шагов') + ' (' +
         gone.slice(0, 3).map(function (s) { return '«' + s.line + '»'; }).join(', ') + (gone.length > 3 ? ', …' : '') + ')';
     }
-    ui().openModal({
+    ui.openModal({
       cls: 'wide',
       title: 'Удалить фрагмент ' + (i + 1) + '?',
-      body: [ui().warnText(text + '. Изменения вступят в силу после сохранения.')],
+      body: [ui.warnText(text + '. Изменения вступят в силу после сохранения.')],
       buttons: [
         { label: 'Отмена', autofocus: true },
         { label: 'Удалить фрагмент', cls: 'btn-d', icon: 'trash', action: function (close) {
           close();
           st.fragments.splice(i, 1);
+          // индексы карточек за удалённой сдвигаются; значение переносится как
+          // есть — иначе свёрнутая вручную карточка развернулась бы сама
           var open = {};
-          Object.keys(A.s.open).forEach(function (k) { k = +k; if (k < i) open[k] = true; else if (k > i) open[k - 1] = true; });
+          Object.keys(A.s.open).forEach(function (k) {
+            var n = +k;
+            if (n < i) open[n] = A.s.open[k];
+            else if (n > i) open[n - 1] = A.s.open[k];
+          });
           A.s.open = open;
           renderFragments();
           A.changed();
@@ -144,7 +146,7 @@ MKB.admin = MKB.admin || {};
   }
 
   function moveFragment(i, d) {
-    var fr = stage().fragments, j = i + d;
+    var fr = A.stage().fragments, j = i + d;
     if (j < 0 || j >= fr.length) return;
     var x = fr[i]; fr[i] = fr[j]; fr[j] = x;
     var oi = !!A.s.open[i], oj = !!A.s.open[j];
@@ -158,15 +160,15 @@ MKB.admin = MKB.admin || {};
   // Кнопки карточки и «+ Фрагмент»
   function onClick(t, card) {
     if (t.id === 'adm-frag-add') {
-      stage().fragments.push({ free: false, code: '' });
-      A.s.open[stage().fragments.length - 1] = true;
+      A.stage().fragments.push({ free: false, code: '' });
+      A.s.open[A.stage().fragments.length - 1] = true;
       renderFragments();
       A.changed();
       var tas = document.querySelectorAll('#adm-frags textarea');
       if (tas.length) tas[tas.length - 1].focus();
       return;
     }
-    var i = +card.dataset.i, act = t.dataset.act, f = stage().fragments[i];
+    var i = +card.dataset.i, act = t.dataset.act, f = A.stage().fragments[i];
     if (act === 'up') moveFragment(i, -1);
     else if (act === 'down') moveFragment(i, 1);
     else if (act === 'del') deleteFragment(i);
@@ -182,7 +184,7 @@ MKB.admin = MKB.admin || {};
 
   // Код правится на месте, без перерисовки поля — иначе сбился бы курсор
   function onInput(t) {
-    var card = t.closest('.frag'), f = stage().fragments[+card.dataset.i];
+    var card = t.closest('.frag'), f = A.stage().fragments[+card.dataset.i];
     f.code = t.value;
     var n = codeLines(f.code).length;
     card.querySelector('.frag-h .cnt').textContent = n ? plural(n, 'строка', 'строки', 'строк') : 'пусто';

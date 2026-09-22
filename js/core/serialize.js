@@ -7,8 +7,7 @@ window.MKB = window.MKB || {};
   // indent — шаг отступа в пробелах (MKB.detectIndentStep), по умолчанию 2.
   function buildCode(assembled, blocks, values, indent) {
     var pad = ' '.repeat(indent || 2);
-    var byId = {};
-    blocks.forEach(function (b) { byId[b.id] = b; });
+    var byId = MKB.indexById(blocks);
     var nodes = MKB.parseAssembled(assembled, blocks);
 
     var lines = [];

@@ -2,11 +2,7 @@
 window.MKB = window.MKB || {};
 
 (function () {
-  function indexById(blocks) {
-    var m = {};
-    blocks.forEach(function (b) { m[b.id] = b; });
-    return m;
-  }
+  // MKB.indexById — из split.js: блоки по id
 
   // assembled — обход дерева слотов в глубину: id блока или null (пустой слот).
   // Под блоком идут ровно bodyCount слотов его тела, у пустого слота тела нет,
@@ -29,7 +25,7 @@ window.MKB = window.MKB || {};
 
   // Эталон этапа: блоки по позиции и то же разбиение на поддеревья
   function referenceNodes(ref) {
-    return parseAssembled(ref.map(function (b) { return b.id; }), indexById(ref));
+    return parseAssembled(ref.map(function (b) { return b.id; }), MKB.indexById(ref));
   }
 
   // Для каждого слота — эталонный блок, с которым его сравнивать.
@@ -72,7 +68,7 @@ window.MKB = window.MKB || {};
   // → { ok, slots: [{ index, status }], fields: [{ id, status }] }
   function validate(assembled, blocks, values) {
     values = values || {};
-    var byId = indexById(blocks);
+    var byId = MKB.indexById(blocks);
     var ref = blocks.slice().sort(function (a, b) { return a.position - b.position; });
     var nodes = parseAssembled(assembled, byId);
     var expected = expectedFor(nodes, ref, byId);
@@ -104,6 +100,6 @@ window.MKB = window.MKB || {};
     return { ok: ok, slots: slots, fields: fields };
   }
 
-  MKB.parseAssembled = function (assembled, blocks) { return parseAssembled(assembled, indexById(blocks)); };
+  MKB.parseAssembled = function (assembled, blocks) { return parseAssembled(assembled, MKB.indexById(blocks)); };
   MKB.validate = validate;
 })();

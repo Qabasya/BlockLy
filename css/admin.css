@@ -45,10 +45,6 @@ textarea.code { width: 100%; min-height: 110px; padding: var(--sp-12); backgroun
 .add { display: flex; align-items: center; justify-content: center; gap: var(--sp-8); width: 100%; padding: var(--sp-12); border: 1px dashed var(--gray5); border-radius: var(--r-12); background: transparent; color: var(--gray7); font-weight: 600; }
 .add:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-l); }
 
-/* разделитель «код разобран» */
-.parsed { display: flex; align-items: center; gap: var(--sp-8); color: var(--gray7); font-size: var(--fs-14); }
-.parsed::before, .parsed::after { content: ""; flex: 1; height: 1px; background: var(--gray3); }
-
 /* шаги */
 .steps { display: flex; flex-direction: column; }
 .step { display: grid; grid-template-columns: 56px 1fr; gap: var(--sp-12); padding: var(--sp-12) var(--sp-20); border-top: 1px solid var(--gray1); }

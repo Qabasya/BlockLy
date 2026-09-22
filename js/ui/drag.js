@@ -4,14 +4,11 @@ window.MKB = window.MKB || {};
 MKB.ui = MKB.ui || {};
 
 (function () {
+  var ui = MKB.ui, $ = ui.$, pathOf = ui.pathOf;
   var THRESHOLD = 4;        // px: меньше — это клик (фокус, поле ввода), не перенос
   var EDGE = 40;            // px от края колонки, где она начинает прокручиваться
   var SPEED = 12;           // px за кадр
   var DROP_TEXT = 'Отпусти, чтобы поставить';
-
-  function pathOf(e) {
-    return e.dataset.path ? e.dataset.path.split('.').map(Number) : null;
-  }
 
   // root — экран ученика. onDrop(src, target):
   //   src    = { id, path }  — path null, если блок из палитры
@@ -25,7 +22,11 @@ MKB.ui = MKB.ui || {};
       if (e.target.closest('select, input, textarea')) return;
       var src = e.target.closest('.pz[data-id]');
       if (!src || !root.contains(src)) return;
-      d = { src: src, x0: e.clientX, y0: e.clientY, started: false, target: null, drop: null };
+      d = { src: src, pid: e.pointerId, x0: e.clientX, y0: e.clientY, started: false, target: null, drop: null };
+      // Без захвата указателя pointerup не придёт вовсе, если кнопку отпустили
+      // за краем окна: блок остался бы висеть на курсоре, а d — непустым, и
+      // следующий pointerdown вышел бы сразу — перетаскивание умерло бы совсем.
+      try { src.setPointerCapture(e.pointerId); } catch (err) { /* захватывать нечего */ }
     });
 
     document.addEventListener('pointermove', function (e) {
@@ -79,9 +80,10 @@ MKB.ui = MKB.ui || {};
       if (slot && slot !== d.src && !d.src.contains(slot)) {
         t = { kind: 'slot', path: pathOf(slot), filled: !!slot.dataset.id };
         mark = slot;
-      } else if (hit && hit.closest('.pnl') && hit.closest('.pnl').querySelector('#stu-pal') && d.src.dataset.path) {
-        t = { kind: 'pal' };
-        mark = hit.closest('.pnl');
+      } else if (hit && d.src.dataset.path) {
+        // вернуть блок можно в любое место правой колонки, не только в палитру
+        var pnl = hit.closest('.pnl');
+        if (pnl && pnl.contains($('stu-pal'))) { t = { kind: 'pal' }; mark = pnl; }
       }
       if (mark !== d.drop) {
         unmark();
@@ -118,6 +120,7 @@ MKB.ui = MKB.ui || {};
 
     function finish() {
       if (!d) return;
+      try { d.src.releasePointerCapture(d.pid); } catch (err) { /* уже отпущен */ }
       if (d.started) {
         cancelAnimationFrame(d.raf);
         unmark();

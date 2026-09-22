@@ -33,6 +33,23 @@ window.MKB = window.MKB || {};
     ok(S.shuffle(['a', 'b', 'c'], rnd).join() !== 'a,b,c');
   });
 
+  t('Варианты списка перемешаны: в разметке первое значение — ответ', function () {
+    var bs = MKB.splitFragments([{ code: 'a = {{One|Two|Three|Four|Five}}' }], 'python');
+    var first = {};
+    for (var i = 0; i < 40; i++) first[S.fieldOptions(bs).F0[0]] = true;
+    ok(Object.keys(first).length > 1, 'ответ всегда стоит в списке первым');
+    eq(S.fieldOptions(bs).F0.slice().sort(), bs[0].fields[0].options.slice().sort(), 'те же варианты');
+  });
+
+  t('Порядок вариантов хранится в сборке: перерисовка его не тасует', function () {
+    var st = mk3();
+    eq(st.options.F0.slice().sort(), ['Blue', 'Red', 'White'], 'варианты поля fill_solid');
+    var before = st.options.F0.join();
+    ok(S.place(st, 'b8', [6]));
+    S.remove(st, [6]);
+    eq(st.options.F0.join(), before, 'порядок пережил правку сборки');
+  });
+
   t('Поставлен открывающий блок → слоты тела по bodyCount', function () {
     var st = mk3();
     ok(S.place(st, 'b8', [6]));

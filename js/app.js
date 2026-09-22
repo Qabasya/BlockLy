@@ -3,10 +3,8 @@ window.MKB = window.MKB || {};
 MKB.app = MKB.app || {};
 
 (function () {
-  var ui = MKB.ui;
+  var ui = MKB.ui, $ = ui.$;
   var LANG = { arduino: 'Arduino', python: 'Python' };
-
-  function $(id) { return document.getElementById(id); }
 
   // Показать один экран: 'start' | 'student' | 'admin'
   function show(name) {

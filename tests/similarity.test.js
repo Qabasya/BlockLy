@@ -33,6 +33,13 @@ window.MKB = window.MKB || {};
     eq([bs[0].text.slice.apply(bs[0].text, r.diffs.b0[0]), bs[1].text.slice.apply(bs[1].text, r.diffs.b1[0])], ['HIGH', 'LOW']);
   });
 
+  t('Различие внутри русского слова — подсвечено слово целиком', function () {
+    var bs = split('print("кот")\nprint("кит")', 'python');
+    var r = MKB.findSimilar(bs);
+    eq([bs[0].text.slice.apply(bs[0].text, r.diffs.b0[0]), bs[1].text.slice.apply(bs[1].text, r.diffs.b1[0])],
+      ['кот', 'кит']);
+  });
+
   t('Различие в знаке — соседнее слово не захватывается', function () {
     var r = MKB.findSimilar(split('x = a + b;\nx = a - b;', 'python'));
     eq(r.diffs, { b0: [[6, 7]], b1: [[6, 7]] });

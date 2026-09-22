@@ -60,16 +60,23 @@ window.MKB = window.MKB || {};
   }
 
   // Шаг отступа — первый ненулевой отступ в этапе; нет вложенности — 1
-  function detectIndentStep(fragments, language) {
-    var lines = cleanLines(fragments, language);
+  function stepOf(lines) {
     for (var i = 0; i < lines.length; i++) if (lines[i].indent > 0) return lines[i].indent;
     return 1;
+  }
+  function detectIndentStep(fragments, language) { return stepOf(cleanLines(fragments, language)); }
+
+  // Блоки по id: нужно почти всем, кто с ними работает
+  function indexById(blocks) {
+    var m = {};
+    blocks.forEach(function (b) { m[b.id] = b; });
+    return m;
   }
 
   // language: "arduino" | "python" — нужен только для удаления комментариев
   function splitFragments(fragments, language) {
     var lines = cleanLines(fragments, language);
-    var step = detectIndentStep(fragments, language);
+    var step = stepOf(lines);
     var blocks = [];
     var stack = [];                     // stack[d] — последний блок глубины d
 
@@ -150,6 +157,7 @@ window.MKB = window.MKB || {};
     }).join('\n');
   }
 
+  MKB.indexById = indexById;
   MKB.alignIndent = alignIndent;
   MKB.expandTabs = expandTabs;
   MKB.stripComment = stripComment;

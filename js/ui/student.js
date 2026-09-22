@@ -4,14 +4,13 @@ window.MKB = window.MKB || {};
 MKB.ui = MKB.ui || {};
 
 (function () {
-  var ui = MKB.ui, S = MKB.state;
+  var ui = MKB.ui, S = MKB.state, $ = ui.$;
   var HINT_MS = 30000;
   var IDE = { arduino: 'Arduino IDE', python: 'PyCharm' };
 
   var st = null;
   var view = { result: null, hint: null };
   var hintTimer = null;
-  function $(id) { return document.getElementById(id); }
 
   function open(workshop, stageIndex) {
     st = S.create(workshop, stageIndex);
@@ -20,15 +19,19 @@ MKB.ui = MKB.ui || {};
     render();
   }
 
-  // Перерисовать и вернуть фокус блоку, если он был на нём (клавиатура, клик)
+  // Перерисовать и вернуть фокус туда, где он был: на блок (клавиатура, клик)
+  // или на поле ввода — выбор в списке перерисовывает доску целиком
   function render() {
-    var a = document.activeElement;
-    var keep = a && a.classList && a.classList.contains('pz') && a.dataset.id;
+    var a = document.activeElement, sel = null;
+    if (a && a.classList && a.dataset) {
+      if (a.classList.contains('pz') && a.dataset.id) sel = '.pz[data-id="' + a.dataset.id + '"]';
+      else if (a.dataset.field) sel = '[data-field="' + a.dataset.field + '"]';
+    }
     // подсказка гаснет, когда её блок поставили
     if (view.hint && S.palette(st).indexOf(view.hint) < 0) stopHint();
     ui.renderBoard(st, view);
-    if (keep) {
-      var e = document.querySelector('#scr-student .pz[data-id="' + keep + '"]');
+    if (sel) {
+      var e = document.querySelector('#scr-student ' + sel);
       if (e) e.focus();
     }
   }
@@ -120,7 +123,7 @@ MKB.ui = MKB.ui || {};
   function onKey(e) {
     var b = e.target;
     if (!b.classList || !b.classList.contains('pz') || !b.dataset.id) return;
-    var path = b.dataset.path ? b.dataset.path.split('.').map(Number) : null;
+    var path = ui.pathOf(b);
     if (e.key === 'Enter') {
       e.preventDefault();
       if (path) remove(path);

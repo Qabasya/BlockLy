@@ -4,8 +4,7 @@ window.MKB = window.MKB || {};
 MKB.ui = MKB.ui || {};
 
 (function () {
-  var ui = MKB.ui, S = MKB.state;
-  function $(id) { return document.getElementById(id); }
+  var ui = MKB.ui, S = MKB.state, $ = ui.$;
 
   // Дерево слотов. view.result — результат MKB.validate: статусы по индексу обхода
   function renderWork(st, view) {
@@ -24,6 +23,7 @@ MKB.ui = MKB.ui || {};
           state: res ? res.slots[i].status : 'slot',
           diffs: st.diffs[b.id],
           values: st.values,
+          options: st.options,
           fields: res ? fieldSt : null
         };
         if (ui.isOpener(b)) {
@@ -58,7 +58,8 @@ MKB.ui = MKB.ui || {};
         return ui.blockEl(st.byId[id], {
           state: id === view.hint ? 'hint' : 'pal',
           diffs: st.diffs[id],
-          values: st.values
+          values: st.values,
+          options: st.options
         });
       }));
     }

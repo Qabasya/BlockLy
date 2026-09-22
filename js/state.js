@@ -8,35 +8,57 @@ MKB.state = MKB.state || {};
   // в слоте стоит открывающий блок: bodyCount пустых слотов.
   function emptySlot() { return { id: null, kids: [] }; }
 
-  // Фишер–Йетс; результат не должен совпасть с эталонным порядком
+  // Фишер–Йетс на месте
+  function shuffleOnce(a, rnd) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(rnd() * (i + 1)), x = a[i];
+      a[i] = a[j]; a[j] = x;
+    }
+    return a;
+  }
+
+  // Палитра: результат не должен совпасть с эталонным порядком
   function shuffle(ids, rnd) {
     rnd = rnd || Math.random;
     var a = ids.slice();
     for (var tries = 0; tries < 20; tries++) {
-      for (var i = a.length - 1; i > 0; i--) {
-        var j = Math.floor(rnd() * (i + 1)), x = a[i];
-        a[i] = a[j]; a[j] = x;
-      }
+      shuffleOnce(a, rnd);
       if (a.length < 2 || a.join() !== ids.join()) return a;
     }
     return a.slice(1).concat(a[0]);     // запасной ход: сдвиг на одну позицию
+  }
+
+  // Порядок вариантов в выпадающих списках: { F0: ["Red", "White", "Blue"] }.
+  // В разметке первое значение — правильное, поэтому авторский порядок
+  // показывать нельзя. Перемешивается один раз на этап: иначе список прыгал
+  // бы при каждой перерисовке доски. Совпадение с авторским порядком здесь
+  // допустимо — из двух вариантов иначе всегда выходила бы перестановка, и
+  // ответ так же выдавал бы себя, только вторым.
+  function fieldOptions(blocks, rnd) {
+    rnd = rnd || Math.random;
+    var out = {};
+    blocks.forEach(function (b) {
+      b.fields.forEach(function (f) {
+        if (f.options.length) out[f.id] = shuffleOnce(f.options.slice(), rnd);
+      });
+    });
+    return out;
   }
 
   // Новая сборка этапа: слоты только верхнего уровня, палитра перемешана
   function create(workshop, stageIndex, rnd) {
     var stage = workshop.stages[stageIndex];
     var blocks = MKB.splitFragments(stage.fragments, workshop.language);
-    var byId = {};
-    blocks.forEach(function (b) { byId[b.id] = b; });
     return {
       workshop: workshop,
       stageIndex: stageIndex,
       stage: stage,
       blocks: blocks,
-      byId: byId,
+      byId: MKB.indexById(blocks),
       indent: MKB.detectIndentStep(stage.fragments, workshop.language),
       diffs: MKB.findSimilar(blocks).diffs,
       order: shuffle(blocks.map(function (b) { return b.id; }), rnd),   // порядок в палитре
+      options: fieldOptions(blocks, rnd),                               // порядок вариантов в списках
       slots: blocks.filter(function (b) { return b.depth === 0; }).map(emptySlot),
       values: {}
     };
@@ -154,6 +176,7 @@ MKB.state = MKB.state || {};
   function isFull(st) { return assembled(st).every(function (id) { return id; }); }
 
   MKB.state.shuffle = shuffle;
+  MKB.state.fieldOptions = fieldOptions;
   MKB.state.create = create;
   MKB.state.slotAt = slotAt;
   MKB.state.place = place;

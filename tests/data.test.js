@@ -7,11 +7,24 @@ MKB.test('Список мастер-классов есть и без подкл
   MKB.ok(Array.isArray(MKB.workshops), 'MKB.workshops не массив');
 });
 
-MKB.test('МК-3 подключён через <script src>', function () {
-  var mk3 = MKB.workshops.filter(function (w) { return w.id === 'mk3'; })[0];
-  MKB.ok(mk3, 'мастер-класс mk3 не найден в MKB.workshops');
-  MKB.eq(mk3.language, 'arduino', 'язык');
-  MKB.eq(mk3.stages.length, 1, 'число этапов');
-  MKB.eq(mk3.stages[0].fragments.length, 4, 'число фрагментов');
-  MKB.eq(mk3.stages[0].steps.length, 11, 'число шагов');
+// Каждый подключённый мастер-класс устроен по модели. Содержимое не сверяется:
+// тесты ядра опираются на tests/fixture.js, правки в админке их не ломают.
+MKB.test('Подключённые мастер-классы устроены по модели', function () {
+  var seen = {};
+  MKB.workshops.forEach(function (w) {
+    var name = w.id || '(без id)';
+    MKB.ok(w.id && !seen[w.id], name + ': id пустой или повторяется');
+    seen[w.id] = true;
+    MKB.ok(w.title, name + ': нет названия');
+    MKB.ok(w.language === 'arduino' || w.language === 'python', name + ': язык не arduino и не python');
+    MKB.ok(w.stages && w.stages.length, name + ': нет этапов');
+    var stageIds = {};
+    w.stages.forEach(function (st) {
+      MKB.ok(st.id && !stageIds[st.id], name + ': id этапа пустой или повторяется');
+      stageIds[st.id] = true;
+      MKB.ok(st.fragments && st.fragments.length, name + '/' + st.id + ': нет фрагментов');
+      var bs = MKB.splitFragments(st.fragments, w.language);
+      MKB.ok(MKB.stepsInSync(bs, st.steps), name + '/' + st.id + ': шаги не совпадают с кодом');
+    });
+  });
 });

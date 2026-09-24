@@ -4,7 +4,7 @@ window.MKB = window.MKB || {};
 (function () {
   var t = MKB.test, eq = MKB.eq;
 
-  var MK3 = MKB.workshops[0];
+  var MK3 = MKB.fixtures.mk3;
   function mk3() { return MKB.splitFragments(MK3.stages[0].fragments, MK3.language); }
   function ids(bs) { return bs.map(function (b) { return b.id; }); }
   function statuses(r) { return r.slots.map(function (s) { return s.status; }); }

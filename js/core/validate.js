@@ -89,7 +89,7 @@ window.MKB = window.MKB || {};
     assembled.forEach(function (id) {
       if (!id) return;
       byId[id].fields.forEach(function (f) {
-        fields.push({ id: f.id, status: MKB.checkValue(values[f.id], f.answer) });
+        fields.push({ id: f.id, status: MKB.checkValue(values[f.id], f.answer, f.options) });
       });
     });
 

@@ -4,7 +4,7 @@ window.MKB = window.MKB || {};
 (function () {
   var t = MKB.test, eq = MKB.eq;
 
-  var MK3 = MKB.workshops[0];
+  var MK3 = MKB.fixtures.mk3;
   function ids(bs) { return bs.map(function (b) { return b.id; }); }
 
   // код из модалки успеха в mockups/03-student.html

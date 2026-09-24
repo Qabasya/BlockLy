@@ -157,7 +157,7 @@ window.MKB = window.MKB || {};
   });
 
   t('МК-3: 11 блоков, тела и хвосты', function () {
-    var bs = MKB.splitFragments(MKB.workshops[0].stages[0].fragments, MKB.workshops[0].language);
+    var bs = MKB.splitFragments(MKB.fixtures.mk3.stages[0].fragments, MKB.fixtures.mk3.language);
     eq(bs.length, 11);
     var setup = byText(bs, 'void setup() {'), loop = byText(bs, 'void loop() {');
     eq([setup.bodyCount, setup.closer, loop.bodyCount, loop.closer], [2, '}', 2, '}']);
@@ -165,6 +165,6 @@ window.MKB = window.MKB || {};
     eq(bs.map(function (b) { return b.free; }), [true, true, true, true, false, false, false, false, false, false, false]);
     eq(byText(bs, 'FastLED.show();').parentId, loop.id);
     // тексты блоков совпадают со строками шагов
-    eq(texts(bs), MKB.workshops[0].stages[0].steps.map(function (s) { return s.line; }));
+    eq(texts(bs), MKB.fixtures.mk3.stages[0].steps.map(function (s) { return s.line; }));
   });
 })();

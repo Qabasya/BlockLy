@@ -116,6 +116,7 @@
           <div class="stabs" id="adm-stabs"></div>
           <div class="stage-edit">
             <div class="fld"><label for="adm-stage-name">Название этапа</label><div class="in"><input type="text" id="adm-stage-name" placeholder="Например: Бегущий огонёк"></div></div>
+            <button class="btn" type="button" id="adm-stage-dup" title="Копия встанет следующим этапом: код фрагментов и описания шагов сохранятся"><svg class="ic"><use href="#i-copy"/></svg>Дублировать этап</button>
             <button class="btn btn-dl" type="button" id="adm-stage-del"><svg class="ic"><use href="#i-trash"/></svg>Удалить этап</button>
           </div>
         </div>
@@ -124,6 +125,24 @@
       <section class="panel sec-frags">
         <div class="panel-h"><div><h2>Фрагменты</h2><p>Вставьте код кусками. Порядок фрагментов между собой неизменен.</p></div><span class="cnt" id="adm-frag-cnt"></span></div>
         <div class="panel-b">
+          <details class="memo">
+            <summary><svg class="ic"><use href="#i-chev-r"/></svg>Памятка: поля ввода в коде</summary>
+            <div class="memo-b">
+              <table>
+                <tr><th>Как написать</th><th>Что видит ученик</th><th>Что засчитывается</th></tr>
+                <tr><td><code>CRGB::{{White|Red|Blue}}</code></td><td>выпадающий список, варианты перемешаны</td><td>любой вариант из списка</td></tr>
+                <tr><td><code>CRGB::{{White}}</code></td><td>пустое поле для ввода</td><td>только <code>White</code>; другой регистр — «проверь заглавные буквы»</td></tr>
+                <tr><td><code>fill_solid{{(leds, NUM_LEDS, CRGB::White)}};</code></td><td>поле для длинного куска строки</td><td>текст целиком; пробелы у знаков препинания не важны, между словами важны</td></tr>
+              </table>
+              <ul>
+                <li>В одной строке может быть несколько полей: <code>leds[{{0}}] = CRGB::{{Red|Blue}};</code></li>
+                <li>Внутри значения нельзя писать <code>|</code> и <code>}}</code>.</li>
+                <li>Ширина поля — по длине ответа, у списка — по самому длинному варианту.</li>
+                <li>Незаполненное поле не засчитывается: ученик увидит «заполни поле».</li>
+                <li>Комментарии (<code>//</code> в Arduino, <code>#</code> в Python) удаляются при разборе — пояснения пишите в описания шагов.</li>
+              </ul>
+            </div>
+          </details>
           <div class="frags" id="adm-frags"></div>
           <button class="add" type="button" id="adm-frag-add"><svg class="ic"><use href="#i-plus"/></svg>Фрагмент</button>
         </div>

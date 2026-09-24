@@ -20,7 +20,8 @@ window.MKB = window.MKB || {};
   }
 
   // Поля в строке: {{White}} — свободный ввод, {{White|Red|Blue}} — список.
-  // Первое значение — правильное. options пусты у свободного ввода.
+  // У свободного ввода answer — эталон, options пусты. У списка верен любой
+  // вариант; answer — первый, по нему только считается ширина.
   function parseFields(text) {
     var fields = [], norm = '';
     eachPart(text, function (chunk) { norm += chunk; }, function (i, inner) {
@@ -58,11 +59,14 @@ window.MKB = window.MKB || {};
   }
 
   // → "ok" | "wrong" | "case" | "empty". Регистр учитывается.
-  function checkValue(value, answer) {
-    var v = normalizeValue(value), a = normalizeValue(answer);
+  // options — варианты списка: верен любой из них. Пусты — сравнение с answer.
+  function checkValue(value, answer, options) {
+    var v = normalizeValue(value);
     if (!v) return 'empty';
-    if (v === a) return 'ok';
-    if (v.toLowerCase() === a.toLowerCase()) return 'case';
+    var ok = (options && options.length ? options : [answer]).map(normalizeValue);
+    if (ok.indexOf(v) >= 0) return 'ok';
+    var low = v.toLowerCase();
+    if (ok.some(function (a) { return a.toLowerCase() === low; })) return 'case';
     return 'wrong';
   }
 

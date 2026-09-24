@@ -5,7 +5,7 @@ window.MKB = window.MKB || {};
   var t = MKB.test, eq = MKB.eq, ok = MKB.ok, S = MKB.state;
 
   // МК-3: b0–b3 #define/#include, b4 CRGB, b5 setup, b6–b7 тело, b8 loop, b9–b10 тело
-  function mk3() { return S.create(MKB.workshops[0], 0); }
+  function mk3() { return S.create(MKB.fixtures.mk3, 0); }
   function py(code) {
     return S.create({ language: 'python', stages: [{ fragments: [{ code: code }], steps: [] }] }, 0);
   }
@@ -33,7 +33,7 @@ window.MKB = window.MKB || {};
     ok(S.shuffle(['a', 'b', 'c'], rnd).join() !== 'a,b,c');
   });
 
-  t('Варианты списка перемешаны: в разметке первое значение — ответ', function () {
+  t('Варианты списка перемешаны: порядок не повторяет авторский', function () {
     var bs = MKB.splitFragments([{ code: 'a = {{One|Two|Three|Four|Five}}' }], 'python');
     var first = {};
     for (var i = 0; i < 40; i++) first[S.fieldOptions(bs).F0[0]] = true;

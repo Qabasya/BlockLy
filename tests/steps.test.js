@@ -22,7 +22,7 @@ window.MKB = window.MKB || {};
   });
 
   t('Код не менялся — шаги в синхроне', function () {
-    var w = MKB.workshops[0], st = w.stages[0];
+    var w = MKB.fixtures.mk3, st = w.stages[0];
     eq(MKB.stepsInSync(MKB.splitFragments(st.fragments, w.language), st.steps), true);
     eq(MKB.stepsInSync(split('a();'), [{ line: 'b();', text: '' }]), false);
     eq(MKB.stepsInSync(split('a();'), []), false);

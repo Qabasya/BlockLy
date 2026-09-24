@@ -70,7 +70,7 @@ window.MKB = window.MKB || {};
   });
 
   t('В МК-3 близнецов нет', function () {
-    var w = MKB.workshops[0];
+    var w = MKB.fixtures.mk3;
     eq(MKB.findSimilar(MKB.splitFragments(w.stages[0].fragments, w.language)).pairs, []);
   });
 

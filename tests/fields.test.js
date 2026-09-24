@@ -4,7 +4,7 @@ window.MKB = window.MKB || {};
 (function () {
   var t = MKB.test, eq = MKB.eq;
 
-  t('Поле-список: первое значение — ответ, маркер в norm', function () {
+  t('Поле-список: варианты по порядку, маркер в norm', function () {
     var p = MKB.parseFields('fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue}});');
     eq(p.norm, 'fill_solid(leds, NUM_LEDS, CRGB::<F0>);');
     eq(p.fields, [{ answer: 'White', options: ['White', 'Red', 'Blue'] }]);
@@ -59,6 +59,14 @@ window.MKB = window.MKB || {};
     eq(MKB.checkValue(undefined, 'White'), 'empty');
   });
   t('Поле: другое значение → wrong', function () { eq(MKB.checkValue('Red', 'White'), 'wrong'); });
+
+  t('Список: верен любой вариант', function () {
+    var o = ['White', 'Red', 'Blue'];
+    eq(['White', 'Red', 'Blue'].map(function (v) { return MKB.checkValue(v, 'White', o); }), ['ok', 'ok', 'ok']);
+    eq(MKB.checkValue('Green', 'White', o), 'wrong', 'значения нет в списке');
+    eq(MKB.checkValue('', 'White', o), 'empty');
+    eq(MKB.checkValue('red', 'White', o), 'case');
+  });
 
   t('Ширина поля — длина эталона + 2', function () {
     eq(MKB.fieldWidth({ answer: 'White' }), 7);

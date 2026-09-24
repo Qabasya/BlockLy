@@ -69,6 +69,21 @@ MKB.admin = MKB.admin || {};
     $('adm-stage-name').focus();
   }
 
+  // Копия этапа встаёт сразу за исходным: код фрагментов и описания шагов
+  // сохраняются, дальше правится только то, что изменилось.
+  function duplicateStage() {
+    var w = A.s.w, src = A.stage();
+    var copy = JSON.parse(JSON.stringify(src));
+    var n = w.stages.length + 1, id = 'stage' + n;
+    while (w.stages.some(function (s) { return s.id === id; })) id = 'stage' + ++n;
+    copy.id = id;
+    copy.title = src.title ? src.title + ' (копия)' : '';
+    w.stages.splice(A.s.si + 1, 0, copy);
+    selectStage(A.s.si + 1);
+    A.changed();
+    $('adm-stage-name').select();
+  }
+
   function deleteStage() {
     var st = A.stage(), w = A.s.w;
     if (w.stages.length < 2) return;
@@ -98,6 +113,7 @@ MKB.admin = MKB.admin || {};
     var act = t.dataset.act;
     if (t.classList.contains('stab') && !act) return selectStage(+t.dataset.i);
     if (act === 'add-stage') return addStage();
+    if (t.id === 'adm-stage-dup') return duplicateStage();
     if (t.id === 'adm-stage-del') return deleteStage();
     if (t.id === 'adm-frag-add' || card) return A.frags.onClick(t, card);
   }

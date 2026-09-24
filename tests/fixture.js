@@ -1,16 +1,19 @@
+/* Образец мастер-класса для тестов: замороженная копия МК-3.
+   Тесты ядра опираются на него, а не на workshops/*.js — правки контента
+   в админке тесты не ломают. */
 window.MKB = window.MKB || {};
-window.MKB.workshops = window.MKB.workshops || [];
-window.MKB.workshops.push({
+MKB.fixtures = MKB.fixtures || {};
+MKB.fixtures.mk3 = {
   id: "mk3",
   title: "МК-3: Адресная лента WS2812",
   language: "arduino",
   stages: [
     {
       id: "white",
-      title: "Сплошная заливка цветом",
+      title: "Лента белым цветом",
       fragments: [
         {
-          free: false,
+          free: true,
           code:
 `#define LED_PIN 5
 #define NUM_LEDS 30
@@ -30,7 +33,7 @@ window.MKB.workshops.push({
           free: false,
           code:
 `void loop() {
-  fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}});
+  fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue}});
   FastLED.show();
 }`
         }
@@ -45,9 +48,9 @@ window.MKB.workshops.push({
         { line: "FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);", text: "Сообщите библиотеке тип ленты, пин и массив светодиодов." },
         { line: "FastLED.setBrightness(200);", text: "Задайте яркость ленты." },
         { line: "void loop() {", text: "Начните функцию loop: она повторяется бесконечно." },
-        { line: "fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}});", text: "Вызовите функцию для заливки ленты одним цветом" },
+        { line: "fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue}});", text: "Залейте всю ленту одним цветом — выберите белый." },
         { line: "FastLED.show();", text: "Покажите цвета на ленте." }
       ]
     }
   ]
-});
+};

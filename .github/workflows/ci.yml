@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: tests.html в headless Chrome
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Тесты ядра — та же страница, что открывается двойным кликом.
+      # Итог runner.js пишет в #summary: «Тестов: N, ошибок: M».
+      # Нет итога — страница упала на загрузке, это тоже провал.
+      - name: Run tests.html
+        run: |
+          OUT=$(google-chrome --headless=new --no-sandbox --disable-gpu \
+            --virtual-time-budget=5000 --dump-dom "file://$PWD/tests.html" 2>/dev/null)
+          SUMMARY=$(echo "$OUT" | grep -o 'id="summary"[^<]*' | sed 's/.*>//')
+          echo "$SUMMARY"
+          echo "$OUT" | grep -o '✕[^<]*' || true
+          if [ -z "$SUMMARY" ]; then
+            echo "::error::tests.html не дошёл до итога — ошибка при загрузке скриптов"
+            exit 1
+          fi
+          if ! echo "$SUMMARY" | grep -q 'ошибок: 0$'; then
+            echo "::error::$SUMMARY"
+            exit 1
+          fi

@@ -359,3 +359,9 @@
   проверяются только на соответствие модели.
 - `tools/check-fs-access.html` проверяет, умеет ли браузер на этом компьютере
   записывать в папку.
+- **Релиз.** Тег `v*` запускает `.github/workflows/release.yml`: тесты в
+  headless Chrome, затем `BlockLy-<версия>.zip` в GitHub Releases. В архиве
+  только `index.html`, `assets/`, `css/`, `js/`, `workshops/` внутри папки
+  `BlockLy`. Выпустить: `git tag v1.0.0 && git push origin v1.0.0`. Ручной запуск
+  (Actions → Release → Run workflow) собирает то же самое артефактом, без
+  релиза. `ci.yml` гоняет тесты на каждый push.

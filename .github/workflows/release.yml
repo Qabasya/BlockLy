@@ -1,0 +1,61 @@
+name: Release
+
+# Тег v* (например v1.0.0) → zip для компьютеров учеников в GitHub Releases.
+# Ручной запуск (Actions → Release → Run workflow) собирает тот же zip
+# артефактом запуска, без релиза — посмотреть, что попадёт в архив.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build release ZIP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Гейт качества: красные тесты — релиза нет
+      - name: Run tests.html
+        run: |
+          OUT=$(google-chrome --headless=new --no-sandbox --disable-gpu \
+            --virtual-time-budget=5000 --dump-dom "file://$PWD/tests.html" 2>/dev/null)
+          SUMMARY=$(echo "$OUT" | grep -o 'id="summary"[^<]*' | sed 's/.*>//')
+          echo "$SUMMARY"
+          echo "$OUT" | grep -o '✕[^<]*' || true
+          if [ -z "$SUMMARY" ] || ! echo "$SUMMARY" | grep -q 'ошибок: 0$'; then
+            echo "::error::Тесты не прошли: ${SUMMARY:-страница не загрузилась}"
+            exit 1
+          fi
+
+      # В релиз — только то, что нужно приложению. Список разрешённого, а не
+      # исключений: новый служебный файл в корне сам в архив не попадёт.
+      # Без index.html и workshops/ админка не признает папку папкой проекта.
+      - name: Assemble BlockLy directory
+        run: |
+          mkdir -p build/BlockLy
+          cp -R index.html assets css js workshops build/BlockLy/
+          find build -name '.DS_Store' -delete
+
+      - name: Zip release package
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          [ "$GITHUB_REF_TYPE" = "tag" ] || VERSION="dev-${GITHUB_SHA::7}"
+          cd build
+          zip -r "../BlockLy-$VERSION.zip" BlockLy
+          echo "ZIP=BlockLy-$VERSION.zip" >> "$GITHUB_ENV"
+
+      - uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: ${{ env.ZIP }}
+
+      - uses: actions/upload-artifact@v4
+        if: github.ref_type != 'tag'
+        with:
+          name: BlockLy
+          path: build/BlockLy

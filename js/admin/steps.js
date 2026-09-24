@@ -7,12 +7,24 @@ MKB.admin = MKB.admin || {};
   var ui = MKB.ui, el = ui.el, icon = ui.icon, $ = ui.$;
   function blocks() { return MKB.splitFragments(A.stage().fragments, A.s.w.language); }
 
-  // «Разобрать на шаги →». Описания уже есть, а код изменился — сначала модалка.
+  // Привести шаги к коду без вопросов, если ни одно описание не пропадёт.
+  // → true, если шаги теперь совпадают с кодом. Зовётся из A.render: режим
+  // «Шаги» переживает смену этапа и правку кода, пока ничего не теряется.
+  function trySync() {
+    var st = A.stage(), bs = blocks();
+    if (!bs.length) return false;
+    if (MKB.stepsInSync(bs, st.steps)) return true;
+    if (MKB.reparseSummary(bs, st.steps).lost) return false;
+    st.steps = MKB.transferSteps(bs, st.steps);
+    A.changed();
+    return true;
+  }
+
+  // «Разобрать на шаги →». Модалка — только если какие-то описания пропадут.
   function parse() {
     var st = A.stage(), bs = blocks();
     if (!bs.length) return;
-    if (MKB.stepsInSync(bs, st.steps)) return show();
-    if (!MKB.hasDescriptions(st.steps)) return apply(bs);
+    if (trySync()) return show();
 
     var sum = MKB.reparseSummary(bs, st.steps);
     var list = el('ul', 'mo-list');
@@ -131,5 +143,5 @@ MKB.admin = MKB.admin || {};
     $('adm-steps').addEventListener('input', onInput);
   }
 
-  MKB.admin.steps = { init: init, render: render, parse: parse };
+  MKB.admin.steps = { init: init, render: render, parse: parse, trySync: trySync };
 })();

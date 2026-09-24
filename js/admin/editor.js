@@ -52,9 +52,10 @@ MKB.admin = MKB.admin || {};
   }
 
   // ─── правки ───
+  // Режим не сбрасывается: в «Шагах» можно перейти на соседний этап и
+  // скопировать описание. Не выйдет без потерь — render вернёт «Фрагменты».
   function selectStage(i) {
     A.s.si = i;
-    A.s.mode = 'frags';
     A.frags.setOpenFor(A.stage());
     A.render();
   }

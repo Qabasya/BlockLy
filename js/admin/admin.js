@@ -30,9 +30,10 @@ MKB.admin = MKB.admin || {};
     select();
     $('adm-name').focus();
   }
+  // Режим («Фрагменты» / «Шаги») сохраняется: можно листать описания
+  // соседних мастер-классов. Шагов нет или пропадут описания — render вернёт «Фрагменты».
   function select() {
     A.s.si = 0;
-    A.s.mode = 'frags';
     A.frags.setOpenFor(stage());
     render();
     $('scr-admin').querySelector('.main').scrollTop = 0;
@@ -40,8 +41,8 @@ MKB.admin = MKB.admin || {};
 
   // ─── отрисовка ───
   function render() {
-    var root = $('scr-admin'), st = stage();
-    if (A.s.mode === 'steps' && !MKB.stepsInSync(MKB.splitFragments(st.fragments, A.s.w.language), st.steps)) A.s.mode = 'frags';
+    var root = $('scr-admin');
+    if (A.s.mode === 'steps' && !A.steps.trySync()) A.s.mode = 'frags';
     root.classList.toggle('mode-frags', A.s.mode === 'frags');
     root.classList.toggle('mode-steps', A.s.mode === 'steps');
     A.editor.render();

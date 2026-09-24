@@ -8,9 +8,10 @@ MKB.app = MKB.app || {};
 
   // Показать один экран: 'start' | 'student' | 'admin'
   function show(name) {
-    ui.closeModal();
     closeMenu();
     ['start', 'student', 'admin'].forEach(function (n) { $('scr-' + n).hidden = n !== name; });
+    // после смены экрана: модалка не вернёт фокус на кнопку скрытого экрана
+    ui.closeModal();
     requestAnimationFrame(function () { ui.shapeAll($('scr-' + name)); });
   }
 
@@ -89,7 +90,9 @@ MKB.app = MKB.app || {};
   function askPassword() {
     var p = passwordField();
     function submit(close) {
-      if (p.input.value === MKB.config.adminPassword) { close(); goAdmin(); return; }
+      // модалку закрывает show() уже после смены экрана — фокус не вернётся
+      // на скрытую кнопку «Администрирование»
+      if (p.input.value === MKB.config.adminPassword) { goAdmin(); return; }
       p.err.hidden = false;
       p.input.classList.add('bad');
       p.input.select();
@@ -103,7 +106,13 @@ MKB.app = MKB.app || {};
         { label: 'Войти', cls: 'btn-p', action: submit }
       ]
     });
-    p.input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(m.close); });
+    // preventDefault: иначе Enter после смены экрана «нажимал» кнопку
+    // «Администрирование», и поверх админки открывалась вторая модалка
+    p.input.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      submit(m.close);
+    });
   }
 
   function goAdmin() {

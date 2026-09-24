@@ -47,7 +47,11 @@ MKB.ui = MKB.ui || {};
       scrim.remove();
       document.removeEventListener('keydown', onKey, true);
       if (opts.onClose) opts.onClose();
-      if (back && back.isConnected) back.focus();
+      // Фокус назад — после действия кнопки: оно могло сменить экран или открыть
+      // новую модалку. Иначе Enter «нажимал» кнопку скрытого экрана.
+      setTimeout(function () {
+        if (!current && back && back.isConnected && !back.closest('[hidden]')) back.focus();
+      });
     }
     function onKey(e) {
       if (e.key === 'Escape') { e.preventDefault(); finish(); }

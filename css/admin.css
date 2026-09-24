@@ -22,7 +22,8 @@
 /* фрагменты */
 .frag { background: var(--white); border: 1px solid var(--gray3); border-radius: var(--r-12); box-shadow: var(--sh); }
 .frag.open { border-color: var(--blue); }
-.frag-h { display: flex; align-items: center; gap: var(--sp-12); padding: var(--sp-8) var(--sp-12); }
+.frag-h { display: flex; align-items: center; gap: var(--sp-12); padding: var(--sp-8) var(--sp-12); cursor: pointer; user-select: none; }
+.frag:not(.open):hover { border-color: var(--gray5); }
 .frag-n { width: 28px; height: 28px; display: grid; place-items: center; background: var(--gray1); border-radius: var(--r-6); font-weight: 600; flex: none; }
 .frag-prev { flex: 1; min-width: 0; font-family: var(--font-mono); color: var(--gray7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .frag-h .ttl { flex: 1; font-weight: 600; }

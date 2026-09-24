@@ -108,6 +108,9 @@ MKB.admin = MKB.admin || {};
 
   function onClick(e) {
     var t = e.target.closest('button');
+    // Клик по заголовку карточки мимо кнопок — развернуть или свернуть
+    var head = !t && e.target.closest('#adm-frags .frag-h');
+    if (head) return A.frags.onClick(head.querySelector('[data-act="toggle"]'), head.closest('.frag'));
     if (!t || !$('scr-admin').contains(t)) return;
     var card = t.closest('.frag');
     var act = t.dataset.act;

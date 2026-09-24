@@ -26,6 +26,7 @@ MKB.admin = MKB.admin || {};
       var b = el('button', 'stab' + (i === A.s.si ? ' on' : ''));
       b.type = 'button';
       b.dataset.i = i;
+      b.title = 'Перетащите, чтобы поменять порядок (или Alt + ← →)';
       b.appendChild(el('span', 'sq2', String(i + 1)));
       b.appendChild(el('span', 'stab-t', s.title || 'Новый этап'));
       tabs.appendChild(b);
@@ -107,7 +108,73 @@ MKB.admin = MKB.admin || {};
     });
   }
 
+  // ─── порядок этапов: перетаскивание, Alt + ← → ───
+  // Выбранный этап остаётся выбранным, где бы он ни оказался
+  function moveStage(from, to) {
+    var st = A.s.w.stages;
+    if (to < 0 || to >= st.length || to === from) return;
+    var cur = st[A.s.si];
+    st.splice(to, 0, st.splice(from, 1)[0]);
+    A.s.si = st.indexOf(cur);
+    A.render();
+    A.changed();
+  }
+
+  var DRAG_MIN = 4;         // px: меньше — это клик, а не перетаскивание
+  var drag = null, dropped = false;
+
+  function onStageDown(e) {
+    var tab = e.target.closest('.stab');
+    dropped = false;
+    if (!tab || tab.classList.contains('plus') || e.button !== 0) return;
+    drag = { tab: tab, from: +tab.dataset.i, x: e.clientX, y: e.clientY, id: e.pointerId, on: false };
+  }
+
+  // Этап «подтягивается» за курсором: встаёт перед этапом, над левой половиной
+  // которого курсор, или после него — над правой
+  function onStageMove(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    if (!drag.on) {
+      if (Math.abs(e.clientX - drag.x) + Math.abs(e.clientY - drag.y) < DRAG_MIN) return;
+      drag.on = true;
+      drag.tab.classList.add('drag');
+      try { drag.tab.setPointerCapture(e.pointerId); } catch (err) { /* указатель уже отпущен */ }
+    }
+    var box = $('adm-stabs');
+    box.querySelectorAll('.stab:not(.plus)').forEach(function (t) {
+      if (t === drag.tab) return;
+      var r = t.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return;
+      box.insertBefore(drag.tab, e.clientX < r.left + r.width / 2 ? t : t.nextSibling);
+    });
+  }
+
+  function onStageUp(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var d = drag;
+    drag = null;
+    if (!d.on) return;
+    dropped = true;                 // клик после отпускания — не выбор этапа
+    setTimeout(function () { dropped = false; });
+    var order = [].map.call($('adm-stabs').querySelectorAll('.stab:not(.plus)'), function (t) { return +t.dataset.i; });
+    var to = order.indexOf(d.from);
+    if (e.type === 'pointercancel' || to === d.from) A.render();
+    else moveStage(d.from, to);
+  }
+
+  function onStageKey(e) {
+    var tab = e.target.closest('.stab');
+    if (!tab || tab.classList.contains('plus') || !e.altKey) return;
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    var i = +tab.dataset.i, to = i + (e.key === 'ArrowLeft' ? -1 : 1);
+    moveStage(i, to);
+    var moved = document.querySelector('#adm-stabs .stab[data-i="' + Math.max(0, Math.min(to, A.s.w.stages.length - 1)) + '"]');
+    if (moved) moved.focus();
+  }
+
   function onClick(e) {
+    if (dropped) return;
     var t = e.target.closest('button');
     // Клик по заголовку карточки мимо кнопок — развернуть или свернуть
     var head = !t && e.target.closest('#adm-frags .frag-h');
@@ -141,6 +208,12 @@ MKB.admin = MKB.admin || {};
     var root = $('scr-admin');
     root.addEventListener('click', onClick);
     root.addEventListener('input', onInput);        // у select тоже приходит input
+    var tabs = $('adm-stabs');
+    tabs.addEventListener('pointerdown', onStageDown);
+    tabs.addEventListener('pointermove', onStageMove);
+    tabs.addEventListener('pointerup', onStageUp);
+    tabs.addEventListener('pointercancel', onStageUp);
+    tabs.addEventListener('keydown', onStageKey);
   }
 
   MKB.admin.plural = plural;

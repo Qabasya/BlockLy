@@ -117,6 +117,8 @@ textarea.code::placeholder { color: var(--gray6); font-family: var(--font); }
 .stab.on { background: var(--blue-l); border-color: var(--blue); color: var(--blue-d); font-weight: 600; }
 .stab.on .sq2 { background: var(--blue); color: var(--white); }
 .stab.plus { border-style: dashed; padding-left: var(--sp-12); }
+.stab:not(.plus) { touch-action: none; }
+.stab.drag { position: relative; z-index: 1; box-shadow: var(--sh-lift); transform: rotate(-2deg); cursor: grabbing; }
 .stage-edit { display: grid; grid-template-columns: 1fr auto auto; gap: var(--sp-16); align-items: end; padding-top: var(--sp-12); border-top: 1px solid var(--gray1); }
 .btn-dl { color: var(--red-d); border-color: var(--red-d); }
 .btn-dl:hover { background: var(--red-l); }

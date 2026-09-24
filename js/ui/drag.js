@@ -76,7 +76,7 @@ MKB.ui = MKB.ui || {};
     function hover() {
       var hit = document.elementFromPoint(d.x, d.y);
       var t = null, mark = null;
-      var slot = hit && hit.closest('#stu-work [data-path]');
+      var slot = aim(hit && hit.closest('#stu-work [data-path]'));
       if (slot && slot !== d.src && !d.src.contains(slot)) {
         t = { kind: 'slot', path: pathOf(slot), filled: !!slot.dataset.id };
         mark = slot;
@@ -95,6 +95,22 @@ MKB.ui = MKB.ui || {};
         d.drop = mark;
       }
       d.target = t;
+    }
+
+    // Занятая «С» меняется на другой блок, только если навести на её строку.
+    // Ниже тела — на перекладину с хвостом — значит «в последний слот тела»:
+    // промахнулись на пару пикселей, а «С» пропала бы вместе с телом.
+    // Между строкой и перекладиной (поля «С» слева) — не цель вовсе.
+    function aim(slot) {
+      if (!slot || !slot.classList.contains('cb')) return slot;
+      var head = slot.querySelector(':scope > .cb-h').getBoundingClientRect();
+      if (d.y <= head.bottom) return slot;
+      var mouth = slot.querySelector(':scope > .mouth');
+      if (d.y < mouth.getBoundingClientRect().bottom) return null;
+      var kids = mouth.querySelectorAll(':scope > [data-path]');
+      var last = kids[kids.length - 1];
+      // последний слот — сама вложенная «С»: заменять её отсюда тоже нельзя
+      return last && !last.classList.contains('cb') ? last : null;
     }
 
     function unmark() {

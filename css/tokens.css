@@ -27,6 +27,7 @@
   --r-4: 4px; --r-6: 6px; --r-8: 8px; --r-12: 12px; --r-14: 14px; --r-pill: 20px;
 
   --head-h: 64px;
+  --pz-h: 42px;                                  /* высота строки-блока и строки «С» */
   --sh: 0 1px 3px rgba(0, 0, 0, .06);
   --sh-modal: 0 20px 60px rgba(0, 0, 0, .24);   /* как у .modal в _shared.css */
   --scrim: rgba(0, 0, 0, .3);                    /* как у .scrim в _shared.css */

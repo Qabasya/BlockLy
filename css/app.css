@@ -11,7 +11,7 @@ button { cursor: pointer; }
 
 /* шапка */
 .head { height: var(--head-h); background: var(--white); border-bottom: 1px solid var(--gray2); padding: 0 var(--sp-24); display: flex; align-items: center; justify-content: space-between; }
-.head .logo { height: 40px; display: block; }
+.head .logo { height: 32px; display: block; }   /* одинаковый на всех экранах */
 
 /* кнопки */
 .btn { display: inline-flex; align-items: center; gap: var(--sp-8); border: 1px solid var(--gray3); background: var(--white); padding: var(--sp-8) var(--sp-16); border-radius: var(--r-8); font-size: var(--fs-14); color: var(--gray7); white-space: nowrap; }
@@ -74,7 +74,6 @@ button { cursor: pointer; }
 /* ── экран ученика ── */
 .stu { height: 100vh; display: flex; flex-direction: column; }
 .hl { display: flex; align-items: center; gap: var(--sp-16); min-width: 0; }
-.hl .logo { height: 32px; }
 .sep { width: 1px; height: 32px; background: var(--gray2); flex: none; }
 .head h1 { font-size: var(--fs-16); font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hl > div { min-width: 0; }   /* длинное название — многоточие, а не перенос */
@@ -116,7 +115,7 @@ button { cursor: pointer; }
 .ty-field { --tone: var(--orange); --tint: var(--orange-l); }
 .f1 { background: var(--yellow); } .f2 { background: var(--pink); } .f3 { background: var(--cyan); } .f4 { background: var(--gray7); }
 
-.pz { position: relative; display: flex; align-items: center; gap: var(--sp-8); min-height: 34px; width: 100%; padding: 0 var(--sp-12) 0 var(--sp-16); font-family: var(--font-mono); font-size: var(--fs-14); color: var(--gray9); }
+.pz { position: relative; display: flex; align-items: center; gap: var(--sp-8); min-height: var(--pz-h); width: 100%; padding: 0 var(--sp-12) 0 var(--sp-16); font-family: var(--font-mono); font-size: var(--fs-14); color: var(--gray9); }
 .pz > .stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--tone); border-radius: 8px 0 0 8px; z-index: 1; }
 .pz .fdot { width: 12px; height: 12px; border-radius: 50%; flex: none; box-shadow: 0 0 0 2px var(--white); position: relative; z-index: 1; }
 .pz .code { flex: 1; min-width: 0; white-space: pre; position: relative; z-index: 1; }
@@ -128,8 +127,8 @@ button { cursor: pointer; }
 .pz svg.ln path { fill: none; stroke: var(--tone); stroke-width: 1.5; stroke-linejoin: round; }
 
 .cb { flex-direction: column; align-items: stretch; gap: 0; padding: 0; font-family: var(--font-mono); }
-.cb-h { display: flex; align-items: center; gap: var(--sp-8); min-height: 34px; padding: 0 var(--sp-12) 0 var(--sp-16); position: relative; z-index: 1; }
-.mouth { margin: 0 var(--sp-8) 0 var(--sp-16); display: flex; flex-direction: column; min-height: 34px; position: relative; z-index: 1; }
+.cb-h { display: flex; align-items: center; gap: var(--sp-8); min-height: var(--pz-h); padding: 0 var(--sp-12) 0 var(--sp-16); position: relative; z-index: 1; }
+.mouth { margin: 0 var(--sp-8) 0 var(--sp-16); display: flex; flex-direction: column; min-height: var(--pz-h); position: relative; z-index: 1; }
 .cb-t { display: flex; align-items: center; height: 28px; padding: 0 var(--sp-12) 0 var(--sp-16); position: relative; z-index: 1; }
 .tl { display: inline-flex; align-items: center; gap: var(--sp-6); padding: 0 var(--sp-12); height: 20px; border-radius: var(--r-6); background: var(--gray2); color: var(--gray6); font-size: var(--fs-12); }
 .tl .ic { width: 12px; height: 12px; }

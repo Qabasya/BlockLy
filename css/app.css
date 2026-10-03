@@ -81,6 +81,7 @@ button { cursor: pointer; }
 .btn-lg { padding: var(--sp-12) var(--sp-24); font-size: var(--fs-16); }
 .btn-hint { border-color: var(--green-d); color: var(--green-d); background: var(--green-l); font-weight: 600; }
 .btn-hint:hover { background: var(--green-l); }
+.btn-wait { justify-content: center; font-variant-numeric: tabular-nums; }   /* отсчёт до следующей подсказки */
 
 /* панель управления */
 .bar { display: flex; align-items: center; justify-content: center; height: 56px; padding: 0 var(--sp-16); background: var(--white); border-bottom: 1px solid var(--gray2); flex: none; }

@@ -5,17 +5,17 @@ MKB.ui = MKB.ui || {};
 
 (function () {
   var ui = MKB.ui, S = MKB.state, $ = ui.$;
-  var HINT_MS = 30000;
+  var HINT_S = 30;
   var IDE = { arduino: 'Arduino IDE', python: 'PyCharm' };
 
   var st = null;
-  var view = { result: null, hint: null };
-  var hintTimer = null;
+  var view = { result: null, hint: null, wait: 0 };
+  var waitTimer = null;
 
   function open(workshop, stageIndex) {
     st = S.create(workshop, stageIndex);
-    view = { result: null, hint: null };
-    clearTimeout(hintTimer);
+    view = { result: null, hint: null, wait: 0 };
+    clearInterval(waitTimer);
     render();
   }
 
@@ -59,19 +59,35 @@ MKB.ui = MKB.ui || {};
 
   // ─── подсказка: один следующий нужный блок в палитре ───
   function hint() {
+    if (view.wait) return;
     var next = S.nextBlock(st);
     if (!next || S.isFull(st)) return;
     // одинаковые строки взаимозаменяемы: подсвечиваем ту, что лежит в палитре
     var id = S.palette(st).filter(function (x) { return st.byId[x].norm === next.norm; })[0];
     if (!id) return;
     view.hint = id;
-    clearTimeout(hintTimer);
-    hintTimer = setTimeout(function () { stopHint(); render(); }, HINT_MS);
+    startWait();
     render();
     var e = document.querySelector('#stu-pal .pz[data-id="' + id + '"]');
     if (e) e.scrollIntoView({ block: 'nearest' });
   }
-  function stopHint() { view.hint = null; clearTimeout(hintTimer); }
+  function stopHint() { view.hint = null; }
+
+  // Пауза после подсказки: кнопка заперта, на ней часы и обратный отсчёт.
+  // Секунды считаем от момента окончания — в фоновой вкладке таймер отстаёт
+  function startWait() {
+    var end = Date.now() + HINT_S * 1000;
+    view.wait = HINT_S;
+    clearInterval(waitTimer);
+    waitTimer = setInterval(function () {
+      view.wait = Math.max(0, Math.round((end - Date.now()) / 1000));
+      // раз в секунду меняется только кнопка: доску не перерисовываем
+      if (view.wait) return ui.renderControls(st, view);
+      clearInterval(waitTimer);
+      stopHint();
+      render();
+    }, 1000);
+  }
 
   // ─── проверка ───
   function check() {

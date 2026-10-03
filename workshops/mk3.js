@@ -74,7 +74,7 @@ window.MKB.workshops.push({
           free: false,
           code:
 `void loop() {
-  fadeToBlackBy(leds, NUM_LEDS, {{25}});
+  fadeToBlackBy(leds, NUM_LEDS, {{0-255}});
   int pos = random16(NUM_LEDS);
   leds[pos] += CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}};
   FastLED.show();
@@ -92,7 +92,7 @@ window.MKB.workshops.push({
         { line: "FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);", text: "Сообщите библиотеке тип ленты, пин и массив светодиодов." },
         { line: "FastLED.setBrightness(200);", text: "Задайте яркость ленты." },
         { line: "void loop() {", text: "Начните функцию loop: она повторяется бесконечно." },
-        { line: "fadeToBlackBy(leds, NUM_LEDS, {{25}});", text: "Вызовите функцию для заливки светодиодов чёрным цветом" },
+        { line: "fadeToBlackBy(leds, NUM_LEDS, {{0-255}});", text: "Вызовите функцию для плавного уменьшения яркости светодиодов" },
         { line: "int pos = random16(NUM_LEDS);", text: "Создайте переменную pos и присвойте ей случайное 16-битное число" },
         { line: "leds[pos] += CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}};", text: "Задайте светодиоду на позиции pos цвет" },
         { line: "FastLED.show();", text: "Покажите цвета на ленте." },
@@ -125,7 +125,7 @@ window.MKB.workshops.push({
           free: false,
           code:
 `void loop() {
-  fadeToBlackBy(leds, NUM_LEDS, {{40}});
+  fadeToBlackBy(leds, NUM_LEDS, {{0-255}});
   leds[pos] = CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}};
   FastLED.show();
   pos = (pos + 1) % NUM_LEDS;
@@ -144,67 +144,11 @@ window.MKB.workshops.push({
         { line: "FastLED.setBrightness(200);", text: "Задайте яркость ленты." },
         { line: "int pos = 0;", text: "Создайте переменную с начальным положением светодиода (0)" },
         { line: "void loop() {", text: "Начните функцию loop: она повторяется бесконечно." },
-        { line: "fadeToBlackBy(leds, NUM_LEDS, {{40}});", text: "Вызовите функцию для заливки светодиодов черным цветом" },
+        { line: "fadeToBlackBy(leds, NUM_LEDS, {{0-255}});", text: "Вызовите функцию для плавного уменьшения яркости светодиодов" },
         { line: "leds[pos] = CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}};", text: "Задайте цвет светодиоду на позиции pos" },
         { line: "FastLED.show();", text: "Покажите цвета на ленте." },
         { line: "pos = (pos + 1) % NUM_LEDS;", text: "Увеличьте значение pos на 1 с учетом количества светодиодов" },
         { line: "delay(30);", text: "Вызовите функцию ожидания на 30 секунд" }
-      ]
-    },
-    {
-      id: "stage6",
-      title: "Эффект «Управление бегущим огоньком»  ",
-      fragments: [
-        {
-          free: false,
-          code:
-`#define LED_PIN 5
-#define NUM_LEDS 30
-#define POT A0
-#include <FastLED.h>`
-        },
-        { free: false, code: "CRGB leds[NUM_LEDS];" },
-        {
-          free: false,
-          code:
-`void setup() {
-  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
-  FastLED.setBrightness(200);
-}`
-        },
-        { free: false, code: "int pos = 0;" },
-        {
-          free: false,
-          code:
-`void loop() {
-  int potValue = analogRead(POT);
-  int speed = map(potValue, 0, 1023, 10, 150);
-  fadeToBlackBy(leds, NUM_LEDS, {{80}});
-  leds[pos] = CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}};
-  FastLED.show();
-  pos = (pos + 1) % NUM_LEDS;
-  delay(speed);
-}`
-        }
-      ],
-      steps: [
-        { line: "#define LED_PIN 5", text: "Задайте пин, к которому подключена лента." },
-        { line: "#define NUM_LEDS 30", text: "Укажите, сколько светодиодов на ленте." },
-        { line: "#define POT A0", text: "Задайте пин потенциометра." },
-        { line: "#include <FastLED.h>", text: "Подключите библиотеку FastLED." },
-        { line: "CRGB leds[NUM_LEDS];", text: "Создайте массив цветов — по одному на каждый светодиод." },
-        { line: "void setup() {", text: "Начните функцию setup: она выполняется один раз при включении." },
-        { line: "FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);", text: "Сообщите библиотеке тип ленты, пин и массив светодиодов." },
-        { line: "FastLED.setBrightness(200);", text: "Задайте яркость ленты." },
-        { line: "int pos = 0;", text: "Создайте переменную с начальным положением бегущего огонька (0)" },
-        { line: "void loop() {", text: "Начните функцию loop: она повторяется бесконечно." },
-        { line: "int potValue = analogRead(POT);", text: "Считайте в переменную значение потенциометра" },
-        { line: "int speed = map(potValue, 0, 1023, 10, 150);", text: "Соотнесите значения потенциометра с величинами скорости" },
-        { line: "fadeToBlackBy(leds, NUM_LEDS, {{80}});", text: "Вызовите функцию для заливки светодиодов черным цветом" },
-        { line: "leds[pos] = CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}};", text: "Задайте цвет светодиоду на позиции pos" },
-        { line: "FastLED.show();", text: "Покажите цвета на ленте." },
-        { line: "pos = (pos + 1) % NUM_LEDS;", text: "Увеличьте значение pos на 1 с учетом количества светодиодов" },
-        { line: "delay(speed);", text: "Вызовите функцию ожидания на значение переменной speed" }
       ]
     },
     {
@@ -232,7 +176,7 @@ window.MKB.workshops.push({
           free: false,
           code:
 `void loop() {
-  uint8_t brightness = beatsin8({{20}}, 5, 255);
+  uint8_t brightness = beatsin8({{0-255}}, 5, 255);
   fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}});
   FastLED.setBrightness(brightness);
   FastLED.show();
@@ -249,7 +193,7 @@ window.MKB.workshops.push({
         { line: "FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);", text: "Сообщите библиотеке тип ленты, пин и массив светодиодов." },
         { line: "FastLED.setBrightness(200);", text: "Задайте яркость ленты." },
         { line: "void loop() {", text: "Начните функцию loop: она повторяется бесконечно." },
-        { line: "uint8_t brightness = beatsin8({{20}}, 5, 255);", text: "Установите динамическую яркость ленте." },
+        { line: "uint8_t brightness = beatsin8({{0-255}}, 5, 255);", text: "Установите динамическую яркость ленте." },
         { line: "fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}});", text: "Вызовите функцию для заливки всей ленты выбранным цветом." },
         { line: "FastLED.setBrightness(brightness);", text: "Задайте новую яркость ленты." },
         { line: "FastLED.show();", text: "Покажите цвета на ленте." }
@@ -312,6 +256,62 @@ window.MKB.workshops.push({
       ]
     },
     {
+      id: "stage6",
+      title: "Эффект «Управление бегущим огоньком»  ",
+      fragments: [
+        {
+          free: false,
+          code:
+`#define LED_PIN 5
+#define NUM_LEDS 30
+#define POT A0
+#include <FastLED.h>`
+        },
+        { free: false, code: "CRGB leds[NUM_LEDS];" },
+        {
+          free: false,
+          code:
+`void setup() {
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.setBrightness(200);
+}`
+        },
+        { free: false, code: "int pos = 0;" },
+        {
+          free: false,
+          code:
+`void loop() {
+  int potValue = analogRead(POT);
+  int speed = map(potValue, 0, 1023, 10, 150);
+  fadeToBlackBy(leds, NUM_LEDS, {{0-255}});
+  leds[pos] = CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}};
+  FastLED.show();
+  pos = (pos + 1) % NUM_LEDS;
+  delay(speed);
+}`
+        }
+      ],
+      steps: [
+        { line: "#define LED_PIN 5", text: "Задайте пин, к которому подключена лента." },
+        { line: "#define NUM_LEDS 30", text: "Укажите, сколько светодиодов на ленте." },
+        { line: "#define POT A0", text: "Задайте пин потенциометра." },
+        { line: "#include <FastLED.h>", text: "Подключите библиотеку FastLED." },
+        { line: "CRGB leds[NUM_LEDS];", text: "Создайте массив цветов — по одному на каждый светодиод." },
+        { line: "void setup() {", text: "Начните функцию setup: она выполняется один раз при включении." },
+        { line: "FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);", text: "Сообщите библиотеке тип ленты, пин и массив светодиодов." },
+        { line: "FastLED.setBrightness(200);", text: "Задайте яркость ленты." },
+        { line: "int pos = 0;", text: "Создайте переменную с начальным положением бегущего огонька (0)" },
+        { line: "void loop() {", text: "Начните функцию loop: она повторяется бесконечно." },
+        { line: "int potValue = analogRead(POT);", text: "Считайте в переменную значение потенциометра" },
+        { line: "int speed = map(potValue, 0, 1023, 10, 150);", text: "Соотнесите значения потенциометра с величинами скорости" },
+        { line: "fadeToBlackBy(leds, NUM_LEDS, {{0-255}});", text: "Вызовите функцию для плавного уменьшения яркости светодиодов" },
+        { line: "leds[pos] = CRGB::{{White|Red|Blue|DeepPink|Green|Indigo|Teal|Yellow}};", text: "Задайте цвет светодиоду на позиции pos" },
+        { line: "FastLED.show();", text: "Покажите цвета на ленте." },
+        { line: "pos = (pos + 1) % NUM_LEDS;", text: "Увеличьте значение pos на 1 с учетом количества светодиодов" },
+        { line: "delay(speed);", text: "Вызовите функцию ожидания на значение переменной speed" }
+      ]
+    },
+    {
       id: "stage7",
       title: "Эффект «Управление дыханием»",
       fragments: [
@@ -338,7 +338,7 @@ window.MKB.workshops.push({
 `void loop() {
   int potValue = analogRead(POT);
   int hue = map(potValue, 0, 1023, 0, 255);
-  uint8_t breath = beatsin8({{20}}, 5, 255);
+  uint8_t breath = beatsin8({{0-255}}, 5, 255);
   fill_solid(leds, NUM_LEDS, CHSV(hue, 255, 255));
   FastLED.setBrightness(breath);
   FastLED.show();
@@ -357,7 +357,7 @@ window.MKB.workshops.push({
         { line: "void loop() {", text: "Начните функцию loop: она повторяется бесконечно." },
         { line: "int potValue = analogRead(POT);", text: "Считайте в переменную значение потенциометра" },
         { line: "int hue = map(potValue, 0, 1023, 0, 255);", text: "Соотнесите значения потенциометра с допустимой яркостью (0-255)" },
-        { line: "uint8_t breath = beatsin8({{20}}, 5, 255);", text: "Установите динамическую яркость ленте." },
+        { line: "uint8_t breath = beatsin8({{0-255}}, 5, 255);", text: "Установите динамическую яркость ленте." },
         { line: "fill_solid(leds, NUM_LEDS, CHSV(hue, 255, 255));", text: "Вызовите функцию для заливки всей ленты выбранным цветом (hue)" },
         { line: "FastLED.setBrightness(breath);", text: "Установите яркость светодиодной ленты значением breath" },
         { line: "FastLED.show();", text: "Покажите цвета на ленте." }

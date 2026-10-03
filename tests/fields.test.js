@@ -7,11 +7,11 @@ window.MKB = window.MKB || {};
   t('Поле-список: варианты по порядку, маркер в norm', function () {
     var p = MKB.parseFields('fill_solid(leds, NUM_LEDS, CRGB::{{White|Red|Blue}});');
     eq(p.norm, 'fill_solid(leds, NUM_LEDS, CRGB::<F0>);');
-    eq(p.fields, [{ answer: 'White', options: ['White', 'Red', 'Blue'] }]);
+    eq(p.fields, [{ answer: 'White', options: ['White', 'Red', 'Blue'], range: null }]);
   });
 
   t('Свободный ввод: без вариантов', function () {
-    eq(MKB.parseFields('CRGB::{{White}}').fields, [{ answer: 'White', options: [] }]);
+    eq(MKB.parseFields('CRGB::{{White}}').fields, [{ answer: 'White', options: [], range: null }]);
   });
 
   t('Свободный ввод длинного куска со скобками и запятыми', function () {
@@ -66,6 +66,53 @@ window.MKB = window.MKB || {};
     eq(MKB.checkValue('Green', 'White', o), 'wrong', 'значения нет в списке');
     eq(MKB.checkValue('', 'White', o), 'empty');
     eq(MKB.checkValue('red', 'White', o), 'case');
+  });
+
+  t('Диапазон: {{0-255}} — поле с границами, маркер в norm как у любого поля', function () {
+    var p = MKB.parseFields('FastLED.setBrightness({{0-255}});');
+    eq(p.norm, 'FastLED.setBrightness(<F0>);');
+    eq(p.fields[0].range, { min: 0, max: 255, int: true });
+    eq(p.fields[0].options, []);
+  });
+
+  t('Диапазон: отрицательные и дробные границы', function () {
+    eq(MKB.parseRange('-10-10'), { min: -10, max: 10, int: true });
+    eq(MKB.parseRange('-10--5'), { min: -10, max: -5, int: true });
+    eq(MKB.parseRange('0.1-1.5'), { min: 0.1, max: 1.5, int: false });
+  });
+
+  t('Не диапазон: одно число, слова, левая граница больше правой, список', function () {
+    eq(['25', '-5', 'x-1', 'a-b', '255-0', '1-2-3'].map(MKB.parseRange), [null, null, null, null, null, null]);
+    eq(MKB.parseFields('x = {{1-5|10-20}};').fields[0].range, null, 'список остаётся списком');
+  });
+
+  t('Диапазон: любое число от min до max включительно → ok, остальное → wrong', function () {
+    var r = MKB.parseRange('0-255');
+    function c(v) { return MKB.checkValue(v, '0-255', [], r); }
+    eq(['0', '128', '255', ' 42 '].map(c), ['ok', 'ok', 'ok', 'ok']);
+    eq(['256', '-1', '1000'].map(c), ['wrong', 'wrong', 'wrong'], 'вне диапазона');
+    eq(['abc', '12a', '1 2', '0-255', '12.5', '012', '+5'].map(c),
+      ['wrong', 'wrong', 'wrong', 'wrong', 'wrong', 'wrong', 'wrong'], 'не целое число');
+    eq(c(''), 'empty');
+  });
+
+  t('Диапазон с дробными границами принимает дробные числа', function () {
+    var r = MKB.parseRange('0.1-1.5');
+    function c(v) { return MKB.checkValue(v, '0.1-1.5', [], r); }
+    eq(['0.1', '1', '1.5', '0.75'].map(c), ['ok', 'ok', 'ok', 'ok']);
+    eq(['0.05', '1.6', '.5', '1.'].map(c), ['wrong', 'wrong', 'wrong', 'wrong']);
+  });
+
+  t('Диапазон: проверка сборки засчитывает число из диапазона', function () {
+    var bs = MKB.splitFragments([{ code: 'FastLED.setBrightness({{0-255}});' }], 'arduino');
+    eq(MKB.validate(['b0'], bs, { F0: '200' }).ok, true);
+    eq(MKB.validate(['b0'], bs, { F0: '300' }).fields, [{ id: 'F0', status: 'wrong' }]);
+    eq(MKB.fillFields(bs[0], { F0: '200' }), 'FastLED.setBrightness(200);', 'в код идёт введённое число');
+  });
+
+  t('Ширина диапазона — по самой длинной границе + 2', function () {
+    eq(MKB.fieldWidth({ answer: '0-255', options: [], range: MKB.parseRange('0-255') }), 5);
+    eq(MKB.fieldWidth({ answer: '-100-5', options: [], range: MKB.parseRange('-100-5') }), 6);
   });
 
   t('Ширина поля — длина эталона + 2', function () {

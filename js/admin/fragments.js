@@ -47,6 +47,7 @@ MKB.admin = MKB.admin || {};
     else {
       h.appendChild(el('span', 'frag-prev', lines[0] ? lines[0].trim() : ''));
       if (frag.free) h.appendChild(el('span', 'badge b-info', 'строки меняются'));
+      if (frag.preset) h.appendChild(el('span', 'badge b-ok', 'готовый код'));
     }
     h.appendChild(el('span', 'cnt', lines.length ? plural(lines.length, 'строка', 'строки', 'строк') : 'пусто'));
     h.appendChild(btnIcon('ib', 'up', 'Выше', 'up', i === 0));
@@ -73,6 +74,16 @@ MKB.admin = MKB.admin || {};
     sw.appendChild(el('b', null, frag.free ? 'Включено' : 'Выключено'));
     sw.appendChild(el('span', null, 'Строки можно менять местами'));
     tools.appendChild(sw);
+    var preset = el('button', 'switch' + (frag.preset ? ' on' : ''));
+    preset.type = 'button';
+    preset.dataset.act = 'preset';
+    preset.setAttribute('role', 'switch');
+    preset.setAttribute('aria-checked', String(!!frag.preset));
+    preset.appendChild(el('span', 'track'));
+    preset.appendChild(el('b', null, frag.preset ? 'Включено' : 'Выключено'));
+    preset.appendChild(el('span', null, 'Фрагмент уже собран'));
+    preset.title = 'Все строки фрагмента сразу стоят в рабочей программе';
+    tools.appendChild(preset);
     var align = el('button', 'btn btn-s');
     align.type = 'button';
     align.dataset.act = 'align';
@@ -160,7 +171,7 @@ MKB.admin = MKB.admin || {};
   // Кнопки карточки и «+ Фрагмент»
   function onClick(t, card) {
     if (t.id === 'adm-frag-add') {
-      A.stage().fragments.push({ free: false, code: '' });
+      A.stage().fragments.push({ free: false, preset: false, code: '' });
       A.s.open[A.stage().fragments.length - 1] = true;
       renderFragments();
       A.changed();
@@ -174,6 +185,7 @@ MKB.admin = MKB.admin || {};
     else if (act === 'del') deleteFragment(i);
     else if (act === 'toggle') { A.s.open[i] = !A.s.open[i]; renderFragments(); }
     else if (act === 'free') { f.free = !f.free; renderFragments(); A.changed(); }
+    else if (act === 'preset') { f.preset = !f.preset; renderFragments(); A.changed(); }
     else if (act === 'align') {
       var unit = (MKB.config.indent || {})[A.s.w.language] || MKB.detectIndentStep([f], A.s.w.language);
       f.code = MKB.alignIndent(f.code, unit);

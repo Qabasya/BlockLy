@@ -52,7 +52,8 @@ window.MKB = window.MKB || {};
           indent: line.length - line.trimStart().length,
           text: line.trim(),
           group: fi + 1,
-          free: !!frag.free
+          free: !!frag.free,
+          preset: !!frag.preset
         });
       });
     });
@@ -96,6 +97,7 @@ window.MKB = window.MKB || {};
         position: blocks.length,
         group: ln.group,
         free: ln.free,
+        preset: ln.preset,
         bodyCount: 0,
         closer: null,
         fields: []

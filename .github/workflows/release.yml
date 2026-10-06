@@ -38,7 +38,8 @@ jobs:
       - name: Assemble BlockLy directory
         run: |
           mkdir -p build/BlockLy
-          cp -R index.html assets css js workshops build/BlockLy/
+          cp -R index.html assets css js workshops tools Install-Desktop-Launcher.bat build/BlockLy/
+          cp tools/Start-BlockLy.bat build/
           find build -name '.DS_Store' -delete
 
       - name: Zip release package
@@ -46,7 +47,7 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           [ "$GITHUB_REF_TYPE" = "tag" ] || VERSION="dev-${GITHUB_SHA::7}"
           cd build
-          zip -r "../BlockLy-$VERSION.zip" BlockLy
+          zip -r "../BlockLy-$VERSION.zip" BlockLy Start-BlockLy.bat
           echo "ZIP=BlockLy-$VERSION.zip" >> "$GITHUB_ENV"
 
       - uses: softprops/action-gh-release@v2
@@ -58,4 +59,6 @@ jobs:
         if: github.ref_type != 'tag'
         with:
           name: BlockLy
-          path: build/BlockLy
+          path: |
+            build/BlockLy
+            build/Start-BlockLy.bat

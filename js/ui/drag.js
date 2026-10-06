@@ -21,7 +21,7 @@ MKB.ui = MKB.ui || {};
       if (e.button !== 0 || d) return;
       if (e.target.closest('select, input, textarea')) return;
       var src = e.target.closest('.pz[data-id]');
-      if (!src || !root.contains(src)) return;
+      if (!src || !root.contains(src) || src.dataset.locked) return;
       d = { src: src, pid: e.pointerId, x0: e.clientX, y0: e.clientY, started: false, target: null, drop: null };
       // Без захвата указателя pointerup не придёт вовсе, если кнопку отпустили
       // за краем окна: блок остался бы висеть на курсоре, а d — непустым, и
@@ -77,7 +77,7 @@ MKB.ui = MKB.ui || {};
       var hit = document.elementFromPoint(d.x, d.y);
       var t = null, mark = null;
       var slot = aim(hit && hit.closest('#stu-work [data-path]'));
-      if (slot && slot !== d.src && !d.src.contains(slot)) {
+      if (slot && !slot.dataset.locked && slot !== d.src && !d.src.contains(slot)) {
         t = { kind: 'slot', path: pathOf(slot), filled: !!slot.dataset.id };
         mark = slot;
       } else if (hit && d.src.dataset.path) {
@@ -125,7 +125,8 @@ MKB.ui = MKB.ui || {};
     function autoScroll() {
       if (!d || !d.started) return;
       var hit = document.elementFromPoint(d.x, d.y);
-      var box = hit && hit.closest('.pnl-b');
+      var box = hit && (hit.closest('.pnl-b') ||
+        (hit.closest('#stu-palette-more') && $('stu-palette-scroll')));
       if (box) {
         var r = box.getBoundingClientRect();
         if (d.y < r.top + EDGE) box.scrollTop -= SPEED;

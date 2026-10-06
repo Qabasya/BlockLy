@@ -25,10 +25,25 @@ MKB.admin = MKB.admin || {};
     select();
   }
   function openNew() {
-    A.s.w = { id: '', title: '', language: '', stages: [{ id: 'stage1', title: '', fragments: [{ free: false, code: '' }], steps: [] }] };
+    A.s.w = { id: '', title: '', language: '', stages: [{ id: 'stage1', title: '', fragments: [{ free: false, preset: false, code: '' }], steps: [] }] };
     A.s.saved = null;
     select();
     $('adm-name').focus();
+  }
+  function duplicate() {
+    // Источник берём из сохранённой версии: предупреждение об уходе работает
+    // одинаково при переходе к другому МК и при создании копии.
+    var source = MKB.workshops.filter(function (w) { return w.id === A.s.w.id; })[0];
+    if (!source) return;
+    leave(function () {
+      var draft = copy(source);
+      draft.title = (draft.title || 'Новый мастер-класс') + ' (копия)';
+      draft.id = MKB.makeId(draft.title, MKB.workshops.map(function (w) { return w.id; }));
+      A.s.w = draft;
+      A.s.saved = null;
+      select();
+      $('adm-name').focus();
+    });
   }
   // Режим («Фрагменты» / «Шаги») сохраняется: можно листать описания
   // соседних мастер-классов. Шагов нет или пропадут описания — render вернёт «Фрагменты».
@@ -60,6 +75,7 @@ MKB.admin = MKB.admin || {};
     st.replaceChildren(icon(dirty ? 'warn' : 'check'), document.createTextNode(dirty ? 'Есть несохранённые изменения' : 'Сохранено'));
     $('adm-connect').hidden = canWrite();
     $('adm-save').disabled = !canWrite() || !dirty;
+    $('adm-dup').disabled = A.s.saved === null;
     var view = $('adm-view');
     view.disabled = !canWrite() || dirty;
     view.title = !canWrite() ? 'Сначала подключите папку проекта' : dirty ? 'Сначала сохраните изменения' : '';
@@ -153,7 +169,7 @@ MKB.admin = MKB.admin || {};
 
   // ─── удаление мастер-класса ───
   function remove(id) {
-    var isDraft = A.s.saved === null && !id;
+    var isDraft = A.s.saved === null && id === A.s.w.id;
     var w = isDraft ? A.s.w : MKB.workshops.filter(function (x) { return x.id === id; })[0];
     if (!w) return;
     var nFr = 0, nSt = 0;
@@ -205,6 +221,7 @@ MKB.admin = MKB.admin || {};
     $('adm-list').addEventListener('click', onList);
     $('adm-list').addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target.classList.contains('mk')) onList(e); });
     $('adm-new').addEventListener('click', function () { leave(openNew); });
+    $('adm-dup').addEventListener('click', duplicate);
     $('adm-collapse').addEventListener('click', function () {
       var c = $('scr-admin').classList.toggle('collapsed');
       this.setAttribute('aria-label', c ? 'Развернуть список' : 'Свернуть список');

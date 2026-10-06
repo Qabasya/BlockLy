@@ -47,8 +47,11 @@ window.MKB = window.MKB || {};
 
   function fragmentJs(f) {
     var code = String(f.code == null ? '' : f.code);
-    if (code.indexOf('\n') < 0) return '        { free: ' + !!f.free + ', code: ' + q(code) + ' }';
-    return '        {\n          free: ' + !!f.free + ',\n          code:\n' + codeLiteral(code) + '\n        }';
+    var preset = f.preset ? ', preset: true' : '';
+    if (code.indexOf('\n') < 0) return '        { free: ' + !!f.free + preset + ', code: ' + q(code) + ' }';
+    return '        {\n          free: ' + !!f.free + ',\n' +
+      (f.preset ? '          preset: true,\n' : '') +
+      '          code:\n' + codeLiteral(code) + '\n        }';
   }
 
   function stageJs(s) {

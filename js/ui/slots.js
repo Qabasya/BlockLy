@@ -20,7 +20,9 @@ MKB.ui = MKB.ui || {};
       } else {
         var b = st.byId[s.id];
         var opts = {
-          state: res ? res.slots[i].status : 'slot',
+          state: b.preset ? 'preset' : res ? res.slots[i].status : 'slot',
+          preset: b.preset,
+          locked: S.hasPreset(st, s),
           diffs: st.diffs[b.id],
           values: st.values,
           options: st.options,
@@ -84,7 +86,8 @@ MKB.ui = MKB.ui || {};
         box.appendChild(ui.el('span', 'steptx', 'Всё поставлено. Нажми «Проверить»!'));
       } else {
         var step = st.stage.steps[next.position];
-        box.appendChild(ui.el('span', 'stepno', 'Шаг ' + (next.position + 1) + ' из ' + st.blocks.length));
+        var tasks = st.blocks.filter(function (b) { return !b.preset; });
+        box.appendChild(ui.el('span', 'stepno', 'Шаг ' + (tasks.indexOf(next) + 1) + ' из ' + tasks.length));
         box.appendChild(ui.el('span', 'steptx', step ? step.text : ''));
       }
     }
@@ -93,32 +96,24 @@ MKB.ui = MKB.ui || {};
 
   // Низ колонки и шапка: «Проверить» активна, когда заполнены все слоты;
   // тогда же подсказывать нечего — «Подсказка» гаснет, «Проверить» светится.
-  // После подсказки кнопка заперта на view.wait секунд: часы и обратный отсчёт.
   function renderControls(st, view) {
-    var full = S.isFull(st), res = view.result, wait = view.wait || 0;
+    var full = S.isFull(st), res = view.result;
     var check = $('stu-check'), hint = $('stu-hint');
     check.disabled = !full;
     check.classList.toggle('glow', full && !res);
-    // ширину кнопки запоминаем до смены подписи — шапка не должна прыгать
-    if (wait && !hint.style.minWidth) hint.style.minWidth = hint.offsetWidth + 'px';
-    hint.disabled = full || wait > 0;
+    hint.disabled = full;
     hint.classList.toggle('btn-hint', !hint.disabled);
-    hint.classList.toggle('btn-wait', wait > 0);
-    hint.firstChild.firstChild.setAttribute('href', wait ? '#i-clock' : '#i-bulb');
-    hint.lastChild.textContent = wait || 'Подсказка';
     $('stu-foot').textContent = !full ? 'Заполни все слоты, чтобы проверить'
       : !res ? 'Все слоты заполнены'
       : res.ok ? 'Этап собран верно'
       : 'Поправь подсвеченные блоки и проверь ещё раз';
   }
 
-  // view: { result: Result | null, hint: id блока с подсказкой | null,
-  //         wait: сколько секунд «Подсказка» ещё заперта }
+  // view: { result: Result | null, hint: id блока с подсказкой | null }
   function renderBoard(st, view) {
     view = view || {};
     var w = st.workshop;
     $('stu-title').textContent = w.title;
-    $('stu-stage-n').textContent = 'Этап ' + (st.stageIndex + 1) + ' из ' + w.stages.length;
     $('stu-stage-t').textContent = st.stage.title;
     renderBar(st, view);
     renderWork(st, view);

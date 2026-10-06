@@ -88,7 +88,7 @@ textarea.code { width: 100%; min-height: 110px; padding: var(--sp-12); backgroun
 .mk .del { width: 24px; height: 24px; display: grid; place-items: center; border: 0; background: none; color: var(--gray5); border-radius: var(--r-4); padding: 0; flex: none; visibility: hidden; }
 .mk:hover .del, .mk.on .del { visibility: visible; }
 .mk .del:hover { background: var(--red-l); color: var(--red-d); }
-.tree-f { padding: var(--sp-12); border-top: 1px solid var(--gray2); flex: none; }
+.tree-f { padding: var(--sp-12); border-top: 1px solid var(--gray2); flex: none; display: flex; flex-direction: column; gap: var(--sp-8); }
 .tree-f .btn { width: 100%; justify-content: center; }
 .collapse-btn { border: 1px solid var(--gray3); background: var(--white); border-radius: var(--r-6); width: 24px; height: 24px; display: grid; place-items: center; color: var(--gray6); padding: 0; }
 .collapse-btn:hover { background: var(--gray1); color: var(--gray9); }

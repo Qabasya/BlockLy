@@ -12,7 +12,10 @@ MKB.app = MKB.app || {};
     ['start', 'student', 'admin'].forEach(function (n) { $('scr-' + n).hidden = n !== name; });
     // после смены экрана: модалка не вернёт фокус на кнопку скрытого экрана
     ui.closeModal();
-    requestAnimationFrame(function () { ui.shapeAll($('scr-' + name)); });
+    requestAnimationFrame(function () {
+      if (name === 'student') ui.studentLayout.refresh();
+      ui.shapeAll($('scr-' + name));
+    });
   }
 
   // Действие, которое теряет сборку: если что-то уже поставлено — сначала спросить

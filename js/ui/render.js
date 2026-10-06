@@ -69,7 +69,7 @@ MKB.ui = MKB.ui || {};
   // Ширина — MKB.fieldWidth: эталон не должен выдавать длину ответа.
   // options — перемешанный порядок вариантов (MKB.state): верен любой вариант,
   // но порядок в списке не должен повторять авторский.
-  function fieldEl(field, value, status, options) {
+  function fieldEl(field, value, status, options, preset) {
     var fs = FIELD_ST[status];
     var box = el('span', 'inl' + (fs ? ' ' + fs[0] : ''));
     var width = MKB.fieldWidth(field) + 'ch';
@@ -89,6 +89,7 @@ MKB.ui = MKB.ui || {};
     ctl.style.width = width;
     ctl.dataset.field = field.id;
     ctl.setAttribute('aria-label', 'Поле ввода');
+    if (preset) { ctl.disabled = true; ctl.setAttribute('aria-label', 'Готовое значение'); }
     box.appendChild(ctl);
     if (fs) box.appendChild(icon(fs[1]));
     else if (list.length) box.appendChild(icon('down'));
@@ -103,7 +104,7 @@ MKB.ui = MKB.ui || {};
     }, function (i) {
       var f = b.fields[i];
       code.appendChild(fieldEl(f, opts.values && opts.values[f.id],
-        opts.fields && opts.fields[f.id], opts.options && opts.options[f.id]));
+        opts.fields && opts.fields[f.id], opts.options && opts.options[f.id], opts.preset));
     });
     return code;
   }
@@ -151,9 +152,11 @@ MKB.ui = MKB.ui || {};
   //   diffs, values, options, fields: { F0: 'ok' | 'case' | … } }
   function blockEl(b, opts) {
     opts = opts || {};
-    var e = el('div', 'pz ty-' + blockType(b) + ' st-' + (opts.state || 'pal'));
+    var e = el('div', 'pz ty-' + blockType(b) + ' st-' + (opts.state || 'pal') + (opts.preset ? ' is-preset' : ''));
     e.dataset.id = b.id;
-    e.tabIndex = 0;                     // клавиатура: Tab по блокам
+    if (opts.preset) e.dataset.preset = 'true';
+    if (opts.locked) e.dataset.locked = 'true';
+    e.tabIndex = opts.locked ? -1 : 0;  // готовое поддерево не перемещается
     e.appendChild(el('i', 'stripe'));
     fillRow(e, b, opts);
     return e;
@@ -163,9 +166,11 @@ MKB.ui = MKB.ui || {};
   // хвостом под замком. У Python хвоста нет — перекладина пустая.
   function openerEl(b, opts, kids) {
     opts = opts || {};
-    var e = el('div', 'pz cb ty-' + blockType(b) + ' st-' + (opts.state || 'slot'));
+    var e = el('div', 'pz cb ty-' + blockType(b) + ' st-' + (opts.state || 'slot') + (opts.preset ? ' is-preset' : ''));
     e.dataset.id = b.id;
-    e.tabIndex = 0;
+    if (opts.preset) e.dataset.preset = 'true';
+    if (opts.locked) e.dataset.locked = 'true';
+    e.tabIndex = opts.locked ? -1 : 0;
     e.appendChild(el('i', 'stripe'));
     var head = el('div', 'cb-h');
     fillRow(head, b, opts);

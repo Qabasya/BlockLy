@@ -65,7 +65,7 @@ MKB.admin = MKB.admin || {};
     var w = A.s.w;
     var n = w.stages.length + 1, id = 'stage' + n;
     while (w.stages.some(function (s) { return s.id === id; })) id = 'stage' + ++n;
-    w.stages.push({ id: id, title: '', fragments: [{ free: false, code: '' }], steps: [] });
+    w.stages.push({ id: id, title: '', fragments: [{ free: false, preset: false, code: '' }], steps: [] });
     selectStage(w.stages.length - 1);
     A.changed();
     $('adm-stage-name').focus();

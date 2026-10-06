@@ -31,6 +31,8 @@ MKB.ui = MKB.ui || {};
     (opts.buttons || []).forEach(function (bt) {
       var btn = ui.el('button', 'btn' + (bt.cls ? ' ' + bt.cls : ''));
       btn.type = 'button';
+      if (bt.disabled) btn.disabled = true;
+      if (bt.title) btn.title = bt.title;
       if (bt.icon) btn.appendChild(ui.icon(bt.icon));
       btn.appendChild(document.createTextNode(bt.label));
       btn.addEventListener('click', function () { (bt.action || finish)(finish, btn); });

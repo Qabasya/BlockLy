@@ -63,22 +63,31 @@
       <h1 id="stu-title"></h1>
     </div>
     <div class="hr">
-      <button class="select" type="button" id="stu-stage"><span><small id="stu-stage-n"></small><b id="stu-stage-t"></b></span><svg class="ic"><use href="#i-down"/></svg></button>
+      <button class="select" type="button" id="stu-stage"><b id="stu-stage-t"></b><svg class="ic"><use href="#i-down"/></svg></button>
       <button class="btn btn-hint" type="button" id="stu-hint"><svg class="ic"><use href="#i-bulb"/></svg>Подсказка</button>
       <button class="btn" type="button" id="stu-reset"><svg class="ic"><use href="#i-home"/></svg>В начало</button>
     </div>
   </header>
   <div class="bar" id="stu-bar"></div>
   <div class="cols">
-    <section class="pnl">
+    <section class="pnl" id="stu-work-panel">
       <div class="pnl-h">Твоя программа</div>
       <div class="pnl-b"><div class="stack" id="stu-work"></div></div>
       <div class="pnl-f"><span id="stu-foot">Заполни все слоты, чтобы проверить</span><button class="btn btn-p btn-lg" type="button" id="stu-check" disabled>Проверить</button></div>
     </section>
-    <section class="pnl">
-      <div class="pnl-h">Блоки<span class="count">осталось блоков: <b id="stu-count"></b></span></div>
-      <div class="pnl-b"><div class="pal" id="stu-pal"></div></div>
-    </section>
+    <div class="stu-cols-divider" id="stu-cols-divider" role="separator" tabindex="0" aria-label="Изменить ширину рабочей области и правых панелей" aria-orientation="vertical" aria-controls="stu-work-panel stu-side" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="stu-side" id="stu-side">
+      <section class="pnl" id="stu-reference-panel" aria-labelledby="stu-reference-heading">
+        <h2 class="pnl-h" id="stu-reference-heading"><span>Эталонный код</span><span class="reference-actions"><button class="reference-action" id="stu-font-minus" type="button" aria-label="Уменьшить шрифт эталонного кода" title="Уменьшить шрифт">−</button><button class="reference-action" id="stu-font-plus" type="button" aria-label="Увеличить шрифт эталонного кода" title="Увеличить шрифт">+</button><button class="reference-action reference-toggle" id="stu-reference-toggle" type="button" aria-controls="stu-reference-scroll" aria-expanded="true" title="Скрыть эталонный код">Скрыть</button></span></h2>
+        <div class="pnl-b reference-scroll" id="stu-reference-scroll" tabindex="0" role="region" aria-label="Эталонный код, прокрутка"><pre class="reference-code" id="stu-reference"></pre></div>
+      </section>
+      <div class="stu-side-divider" id="stu-side-divider" role="separator" tabindex="0" aria-label="Изменить высоту эталонного кода и блоков" aria-orientation="horizontal" aria-controls="stu-reference-panel stu-palette-panel" aria-valuemin="0" aria-valuemax="100"></div>
+      <section class="pnl" id="stu-palette-panel" aria-labelledby="stu-palette-heading">
+        <h2 class="pnl-h" id="stu-palette-heading">Блоки<span class="count">осталось блоков: <b id="stu-count"></b></span></h2>
+        <div class="pnl-b palette-scroll" id="stu-palette-scroll" tabindex="0" role="region" aria-label="Блоки для сборки, прокрутка"><div class="pal" id="stu-pal"></div></div>
+        <button class="palette-more" id="stu-palette-more" type="button" aria-controls="stu-palette-scroll" hidden>↓ Прокрутите, чтобы увидеть все блоки</button>
+      </section>
+    </div>
   </div>
 </div>
 
@@ -167,7 +176,10 @@
     <aside class="tree">
       <div class="tree-h"><b>Мастер-классы</b><button class="collapse-btn" type="button" id="adm-collapse" aria-label="Свернуть список"><svg class="ic"><use href="#i-chev-r"/></svg></button></div>
       <div class="tree-l" id="adm-list"></div>
-      <div class="tree-f"><button class="btn" type="button" id="adm-new"><svg class="ic"><use href="#i-plus"/></svg><span class="lbl">Мастер-класс</span></button></div>
+      <div class="tree-f">
+        <button class="btn" type="button" id="adm-new" title="Новый мастер-класс"><svg class="ic"><use href="#i-plus"/></svg><span class="lbl">Мастер-класс</span></button>
+        <button class="btn" type="button" id="adm-dup" title="Создать копию выбранного мастер-класса" aria-label="Дублировать мастер-класс"><svg class="ic"><use href="#i-copy"/></svg><span class="lbl">Дублировать</span></button>
+      </div>
     </aside>
   </div>
 </div>
@@ -190,6 +202,8 @@
 <script src="js/ui/slots.js"></script>
 <script src="js/ui/drag.js"></script>
 <script src="js/ui/modal.js"></script>
+<script src="js/ui/arduino-upload.js"></script>
+<script src="js/ui/layout.js"></script>
 <script src="js/ui/student.js"></script>
 
 <script src="js/admin/editor.js"></script>
